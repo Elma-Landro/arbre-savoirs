@@ -110,11 +110,11 @@ recipes:
       background: "atelier_fonderie"
       avatar: "👧"
       elements:
-        - { id: minerai, emoji: "🪨", type: "draggable" }
-        - { id: charbon_elt, emoji: "⚫", type: "draggable" }
-        - { id: metal_liquide, emoji: "🧪", type: "draggable" }
-        - { id: four, emoji: "🔥", type: "dropzone" }
-        - { id: moule, emoji: "🧱", type: "dropzone" }
+        - { id: minerai, emoji: "🪨", asset: "prop_minerai_fer", type: "draggable" }
+        - { id: charbon_elt, emoji: "⚫", asset: "prop_charbon", type: "draggable" }
+        - { id: metal_liquide, emoji: "🧪", asset: "prop_metal_liquide", type: "draggable" }
+        - { id: four, emoji: "🔥", asset: "zone_four_fonderie", type: "dropzone" }
+        - { id: moule, emoji: "🧱", asset: "zone_moule_lingot", type: "dropzone" }
       steps:
         - id: 1
           instruction_tts: "Pour faire naître l'acier, commence par jeter le minerai de fer dans le grand four brûlant !"
@@ -144,11 +144,11 @@ recipes:
       background: "atelier_forgeron"
       avatar: "👧"
       elements:
-        - { id: lingot, emoji: "🧱", type: "draggable" }
-        - { id: feu_forge, emoji: "🔥", type: "dropzone" }
-        - { id: enclume, emoji: "⚙️", type: "dropzone" }
-        - { id: marteau, emoji: "🔨", type: "draggable" }
-        - { id: outil, emoji: "⚔️", type: "static" }
+        - { id: lingot, emoji: "🧱", asset: "prop_lingot_acier", type: "draggable" }
+        - { id: feu_forge, emoji: "🔥", asset: "zone_feu_forge", type: "dropzone" }
+        - { id: enclume, emoji: "⚙️", asset: "zone_enclume", type: "dropzone" }
+        - { id: marteau, emoji: "🔨", asset: "prop_marteau", type: "draggable" }
+        - { id: outil, emoji: "⚔️", asset: "result_outil_acier", type: "static" }
       steps:
         - id: 1
           instruction_tts: "Pour forger un outil, chauffe d'abord le lingot d'acier dans le feu de la forge !"
@@ -176,11 +176,11 @@ recipes:
       background: "foret"
       avatar: "👧"
       elements:
-        - { id: tronc, emoji: "🪵", type: "both" }
-        - { id: billot, emoji: "🪵", type: "dropzone" }
-        - { id: hache, emoji: "🪓", type: "draggable" }
-        - { id: scie, emoji: "🪚", type: "draggable" }
-        - { id: planche, emoji: "🟫", type: "static" }
+        - { id: tronc, emoji: "🪵", asset: "prop_tronc", type: "both" }
+        - { id: billot, emoji: "🪵", asset: "zone_billot", type: "dropzone" }
+        - { id: hache, emoji: "🪓", asset: "prop_hache", type: "draggable" }
+        - { id: scie, emoji: "🪚", asset: "prop_scie", type: "draggable" }
+        - { id: planche, emoji: "🟫", asset: "result_planche", type: "static" }
       steps:
         - id: 1
           instruction_tts: "Pose le grand tronc d'arbre sur le billot pour bien le tenir !"
@@ -211,11 +211,11 @@ recipes:
       background: "atelier_charron"
       avatar: "👧"
       elements:
-        - { id: planche, emoji: "🟫", type: "draggable" }
-        - { id: clou, emoji: "📌", type: "draggable" }
-        - { id: roue, emoji: "🛞", type: "draggable" }
-        - { id: chassis, emoji: "🛒", type: "dropzone" }
-        - { id: marteau_charron, emoji: "🔨", type: "draggable" }
+        - { id: planche, emoji: "🟫", asset: "prop_planche_bois", type: "draggable" }
+        - { id: clou, emoji: "📌", asset: "prop_clou", type: "draggable" }
+        - { id: roue, emoji: "🛞", asset: "prop_roue_bois", type: "draggable" }
+        - { id: chassis, emoji: "🛒", asset: "zone_chassis_charrette", type: "dropzone" }
+        - { id: marteau_charron, emoji: "🔨", asset: "prop_marteau", type: "draggable" }
       steps:
         - id: 1
           instruction_tts: "Pose les planches de bois sur le chassis pour commencer la charrette !"
