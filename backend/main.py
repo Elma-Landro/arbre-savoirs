@@ -17,6 +17,7 @@ montage statique (prod). Le frontend tourne sur localhost:3000.
 """
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -36,10 +37,12 @@ import yaml
 
 app = FastAPI(title="L'Arbre des Savoirs — API MVP")
 
-# CORS permissif en dev (le frontend Vite tourne sur :3000).
+# En dev : ARBRE_FRONTEND_ORIGIN non définie → localhost:3000.
+# En prod : définir ARBRE_FRONTEND_ORIGIN=https://ton-domaine.fr
+_ALLOWED_ORIGIN = os.getenv("ARBRE_FRONTEND_ORIGIN", "http://localhost:3000")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[_ALLOWED_ORIGIN],
     allow_methods=["*"],
     allow_headers=["*"],
 )
