@@ -19,6 +19,7 @@ export default function ScenePage({ recipe, childName, onCompleted, onBack }) {
   const [audioUrl, setAudioUrl] = useState('')
   const [preloadedAudios, setPreloadedAudios] = useState({})
   const [narrating, setNarrating] = useState(false)
+  const [audioUnavailable, setAudioUnavailable] = useState(false)
   const [stepVersion, setStepVersion] = useState(0) // incrémenté à chaque changement d'étape
   const audioRef = useRef(null)
 
@@ -75,7 +76,8 @@ export default function ScenePage({ recipe, childName, onCompleted, onBack }) {
     const a = new Audio(url)
     audioRef.current = a
     setAudioUrl(url)
-    await a.play().catch(() => {})
+    // Propage l'échec d'autoplay pour activer le feedback d'indisponibilité.
+    await a.play()
   }
 
   // Narration : lit une piste préchargée si disponible, sinon synthétise un texte court.
@@ -90,8 +92,9 @@ export default function ScenePage({ recipe, childName, onCompleted, onBack }) {
       }
       const data = await narrateStep(text, childName)
       await playAudioUrl(data.audio_url)
-    } catch (e) {
-      console.warn('TTS indisponible :', e.message)
+    } catch {
+      // Autoplay bloqué (Safari/iOS), fichier inaccessible, ou TTS indisponible.
+      setAudioUnavailable(true)
     } finally {
       setNarrating(false)
     }
@@ -124,7 +127,13 @@ export default function ScenePage({ recipe, childName, onCompleted, onBack }) {
             onComplete={() => onCompleted(fullRecipe.id)}
           />
           <p className="text-xs text-stone-400 mt-3 text-center">
-            {narrating ? '🔊 Préparation de la voix…' : (audioUrl ? '' : 'La voix guide l\'enfant à chaque étape.')}
+            {narrating
+              ? '🔊 Préparation de la voix…'
+              : audioUnavailable
+                ? '🔇 La voix n\'est pas disponible — lis les instructions à voix haute !'
+                : audioUrl
+                  ? ''
+                  : 'La voix guide l\'enfant à chaque étape.'}
           </p>
         </>
       )}

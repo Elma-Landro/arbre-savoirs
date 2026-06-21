@@ -40,10 +40,19 @@ export default function RecipeList({ progress, onOpen }) {
           <input
             id="name"
             value={progress.childName}
-            onChange={(e) => progress.setChildName(e.target.value)}
-            className="rounded-xl border-2 border-amber-200 px-3 py-1 text-center font-bold"
+            onChange={(e) => {
+              const val = e.target.value.trimStart().slice(0, 30)
+              progress.setChildName(val)
+            }}
+            className={`rounded-xl border-2 px-3 py-1 text-center font-bold ${
+              progress.childName.trim() === '' ? 'border-amber-400' : 'border-amber-200'
+            }`}
             placeholder="Léa"
+            maxLength={30}
           />
+          {progress.childName.trim() === '' && (
+            <span className="text-amber-600 text-sm">Quel est ton prénom ?</span>
+          )}
           {progress.completedCount > 0 && (
             <span className="ml-3 rounded-full bg-green-100 text-green-800 px-3 py-1 font-bold">
               ⭐ {progress.completedCount} recette{progress.completedCount > 1 ? 's' : ''} complétée{progress.completedCount > 1 ? 's' : ''}
