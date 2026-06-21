@@ -26,10 +26,12 @@
 </defs>
 <g filter="url(#grain)" stroke="#5C3A21" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
 
-  <path d="M89 45 C105 37 125 42 133 56 L120 67 C112 61 102 59 92 62 Z" fill="url(#metal)"/>
-  <path d="M113 65 C110 93 106 126 101 158 L86 163 C91 127 96 94 99 62 Z" fill="#6B7280"/>
-  <path d="M101 158 L78 177 L86 163 Z" fill="#5C3A21"/>
-  <path d="M106 75 C103 100 99 127 95 151" fill="none" stroke="#F4EFE6" opacity="0.55"/>
+  <path d="M45 83 C75 70 128 71 158 84 L148 143 C120 160 75 159 51 143 Z" fill="url(#paper)"/>
+  <path d="M62 80 C67 55 133 55 139 80" fill="none"/>
+  <path d="M62 105 C87 116 117 117 143 105" fill="none"/>
+  <path d="M68 131 C89 140 114 142 136 132" fill="none"/>
+  <circle cx="79" cy="106" r="9" fill="#B35435"/>
+  <circle cx="121" cy="109" r="9" fill="#2E4F3B"/>
 
 </g>
 </svg>

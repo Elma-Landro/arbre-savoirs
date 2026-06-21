@@ -1,1 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Feu de forge</title><defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="13"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter><radialGradient id="fire" cx="50%" cy="55%" r="55%"><stop offset="0" stop-color="#F4EFE6"/><stop offset=".38" stop-color="#D99A2B"/><stop offset=".72" stop-color="#FF6B1A"/><stop offset="1" stop-color="#B35435"/></radialGradient></defs><g filter="url(#grain)" stroke="#5C3A21" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M43 155 C47 126 67 114 62 84 C84 104 85 62 105 45 C113 77 143 82 134 116 C153 124 158 144 153 158 Z" fill="url(#fire)"/><path d="M79 154 C77 130 94 121 94 96 C106 112 115 84 123 75 C127 105 142 118 132 154 Z" fill="#F4EFE6" opacity=".75"/><path d="M39 160 C77 171 123 172 160 160" fill="none" stroke="#5C3A21"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img">
+<defs>
+  <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5"/>
+  </filter>
+  <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#D99A2B"/>
+    <stop offset="0.55" stop-color="#B35435"/>
+    <stop offset="1" stop-color="#5C3A21"/>
+  </linearGradient>
+  <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F4EFE6"/>
+    <stop offset="0.55" stop-color="#6B7280"/>
+    <stop offset="1" stop-color="#5C3A21"/>
+  </linearGradient>
+  <radialGradient id="ember" cx="50%" cy="50%" r="55%">
+    <stop offset="0" stop-color="#FF6B1A"/>
+    <stop offset="0.55" stop-color="#D99A2B"/>
+    <stop offset="1" stop-color="#B35435"/>
+  </radialGradient>
+  <radialGradient id="paper" cx="45%" cy="35%" r="75%">
+    <stop offset="0" stop-color="#F4EFE6"/>
+    <stop offset="1" stop-color="#D99A2B"/>
+  </radialGradient>
+</defs>
+<g filter="url(#grain)" stroke="#5C3A21" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+  <path d="M44 145 C53 99 74 61 101 42 C132 65 153 99 162 145 Z" fill="#5C3A21"/>
+  <path d="M62 145 C66 111 83 80 101 60 C126 89 140 111 144 145 Z" fill="#B35435"/>
+  <path d="M78 146 C81 118 91 97 101 80 C119 105 126 121 126 146 Z" fill="url(#ember)"/>
+  <path d="M55 149 C83 160 125 160 154 149" fill="none"/>
+
+</g>
+</svg>

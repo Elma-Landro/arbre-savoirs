@@ -14,6 +14,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { DndContext, useDraggable, useDroppable, PointerSensor, useSensor } from '@dnd-kit/core'
 import GameAsset from './GameAsset'
+import AvatarPreview from './AvatarPreview'
 
 // Dégradés CSS associés aux clés de `background` (Règle 3 : pas de beaux assets).
 const BACKGROUNDS = {
@@ -107,7 +108,7 @@ function StaticElt({ id, emoji, asset, label }) {
   )
 }
 
-export default function Scene({ scenario, childName, onComplete, onInstruction, onSuccess }) {
+export default function Scene({ scenario, childName, avatarConfig, onComplete, onInstruction, onSuccess }) {
   const [stepIdx, setStepIdx] = useState(0)
   const [wrongId, setWrongId] = useState(null) // id d'élément en secousse (T2.4)
   const [done, setDone] = useState(false)
@@ -171,12 +172,19 @@ export default function Scene({ scenario, childName, onComplete, onInstruction, 
       {/* Décor (T2.1) */}
       <div className="relative p-6 min-h-[420px] flex flex-col" style={{ background: bg }}>
         <div className="flex items-center justify-between mb-4">
+          {/* Avatar de l'enfant — coin supérieur gauche, avec fallback emoji */}
+          <div
+            className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-amber-300 bg-white/75 shadow-lg"
+            title={childName}
+          >
+            {avatarConfig ? (
+              <AvatarPreview config={avatarConfig} size={56} />
+            ) : (
+              <span className="text-5xl drop-shadow">{scenario.avatar || '👧'}</span>
+            )}
+          </div>
           <span className="rounded-full bg-black/30 text-white px-3 py-1 text-sm font-bold">
             Étape {stepIdx + 1} / {total}
-          </span>
-          {/* Avatar de l'enfant */}
-          <span className="text-5xl drop-shadow" title={childName}>
-            {scenario.avatar || '👧'}
           </span>
         </div>
 

@@ -6,10 +6,22 @@ const TIMEOUT_MS = 10_000
 function fetchWithTimeout(url, options = {}) {
   const ctrl = new AbortController()
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS)
-  return fetch(url, { ...options, signal: ctrl.signal })
+  // Compose le signal de l'appelant avec celui du timeout : l'un ou l'autre
+  // peut annuler la requête. Sans cela, options.signal serait écrasé et toute
+  // annulation de plus haut niveau (changement d'écran, etc.) serait ignorée.
+  const { signal: callerSignal, ...rest } = options
+  if (callerSignal) {
+    if (callerSignal.aborted) ctrl.abort()
+    else callerSignal.addEventListener('abort', () => ctrl.abort(), { once: true })
+  }
+  return fetch(url, { ...rest, signal: ctrl.signal })
     .finally(() => clearTimeout(timer))
     .catch((err) => {
-      if (err.name === 'AbortError') throw new Error('Le serveur ne répond pas. Réessaie dans un moment.')
+      // Distingue le timeout de notre AbortController d'une annulation explicite
+      // demandée par l'appelant : seul le timeout devient un message utilisateur.
+      if (err.name === 'AbortError' && ctrl.signal.aborted && !callerSignal?.aborted) {
+        throw new Error('Le serveur ne répond pas. Réessaie dans un moment.')
+      }
       throw err
     })
 }

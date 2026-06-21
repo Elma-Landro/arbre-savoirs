@@ -1,1 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Enclume</title><defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="14"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4EFE6"/><stop offset=".45" stop-color="#6B7280"/><stop offset="1" stop-color="#5C3A21"/></linearGradient></defs><g filter="url(#grain)" stroke="#5C3A21" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M44 83 C68 75 121 76 158 82 C142 96 132 104 116 104 L112 126 L132 144 L67 144 L88 126 L84 104 C67 104 55 98 44 83 Z" fill="url(#metal)"/><path d="M75 144 L62 165 L140 165 L128 144 Z" fill="#6B7280"/><path d="M63 88 C92 96 123 96 149 87" fill="none" stroke="#F4EFE6" opacity=".75"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img">
+<defs>
+  <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5"/>
+  </filter>
+  <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#D99A2B"/>
+    <stop offset="0.55" stop-color="#B35435"/>
+    <stop offset="1" stop-color="#5C3A21"/>
+  </linearGradient>
+  <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F4EFE6"/>
+    <stop offset="0.55" stop-color="#6B7280"/>
+    <stop offset="1" stop-color="#5C3A21"/>
+  </linearGradient>
+  <radialGradient id="ember" cx="50%" cy="50%" r="55%">
+    <stop offset="0" stop-color="#FF6B1A"/>
+    <stop offset="0.55" stop-color="#D99A2B"/>
+    <stop offset="1" stop-color="#B35435"/>
+  </radialGradient>
+  <radialGradient id="paper" cx="45%" cy="35%" r="75%">
+    <stop offset="0" stop-color="#F4EFE6"/>
+    <stop offset="1" stop-color="#D99A2B"/>
+  </radialGradient>
+</defs>
+<g filter="url(#grain)" stroke="#5C3A21" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+  <path d="M42 78 C70 65 129 66 166 78 C156 93 136 101 111 101 L106 123 L134 126 L140 152 L61 152 L66 126 L94 123 L89 101 C68 101 50 93 42 78 Z" fill="url(#metal)"/>
+  <path d="M58 80 C88 89 128 89 154 79" fill="none" stroke="#F4EFE6" opacity="0.65"/>
+  <path d="M70 151 C91 161 113 162 136 151" fill="none"/>
+  <path d="M75 128 L128 128" fill="none"/>
+
+</g>
+</svg>

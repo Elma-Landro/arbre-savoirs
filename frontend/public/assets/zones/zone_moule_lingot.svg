@@ -1,1 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Moule à lingot</title><defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="11"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4EFE6"/><stop offset=".45" stop-color="#6B7280"/><stop offset="1" stop-color="#5C3A21"/></linearGradient></defs><g filter="url(#grain)" stroke="#5C3A21" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M42 121 L65 77 C87 87 114 87 137 77 L161 121 C132 137 72 137 42 121 Z" fill="url(#metal)"/><path d="M63 116 C82 106 119 107 140 116 C126 127 77 127 63 116 Z" fill="#5C3A21" opacity=".65"/><path d="M75 98 C92 104 111 103 128 98" fill="none" stroke="#D99A2B" opacity=".8"/><path d="M42 121 L32 143 M161 121 L171 143" fill="none" stroke="#5C3A21"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img">
+<defs>
+  <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5"/>
+  </filter>
+  <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#D99A2B"/>
+    <stop offset="0.55" stop-color="#B35435"/>
+    <stop offset="1" stop-color="#5C3A21"/>
+  </linearGradient>
+  <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F4EFE6"/>
+    <stop offset="0.55" stop-color="#6B7280"/>
+    <stop offset="1" stop-color="#5C3A21"/>
+  </linearGradient>
+  <radialGradient id="ember" cx="50%" cy="50%" r="55%">
+    <stop offset="0" stop-color="#FF6B1A"/>
+    <stop offset="0.55" stop-color="#D99A2B"/>
+    <stop offset="1" stop-color="#B35435"/>
+  </radialGradient>
+  <radialGradient id="paper" cx="45%" cy="35%" r="75%">
+    <stop offset="0" stop-color="#F4EFE6"/>
+    <stop offset="1" stop-color="#D99A2B"/>
+  </radialGradient>
+</defs>
+<g filter="url(#grain)" stroke="#5C3A21" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+  <path d="M46 80 C81 64 123 64 158 80 L145 140 C116 157 78 156 52 140 Z" fill="#6B7280"/>
+  <path d="M66 90 C87 81 116 80 137 90 L127 125 C110 135 87 135 72 125 Z" fill="#5C3A21"/>
+  <path d="M73 105 C92 98 112 99 128 106" fill="none" stroke="#D99A2B" opacity="0.55"/>
+  <path d="M53 137 C78 151 119 153 146 139" fill="none"/>
+
+</g>
+</svg>

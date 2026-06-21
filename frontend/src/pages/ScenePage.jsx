@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from 'react'
 import { fetchRecipe, narrateStep, preloadSceneAudio } from '../api'
 import Scene from '../components/Scene'
 
-export default function ScenePage({ recipe, childName, onCompleted, onBack }) {
+export default function ScenePage({ recipe, childName, avatarConfig, onCompleted, onBack }) {
   const [fullRecipe, setFullRecipe] = useState(null) // avec scenario
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -84,6 +84,9 @@ export default function ScenePage({ recipe, childName, onCompleted, onBack }) {
   async function speak(text) {
     if (!text) return
     setNarrating(true)
+    // Une nouvelle tentative d'audio réinitialise le statut d'indisponibilité :
+    // si la piste joue (cache ou synthèse), le message d'erreur disparaît.
+    setAudioUnavailable(false)
     try {
       const cachedUrl = preloadedAudios[text]
       if (cachedUrl) {
@@ -122,6 +125,7 @@ export default function ScenePage({ recipe, childName, onCompleted, onBack }) {
             key={fullRecipe.id}
             scenario={fullRecipe.scenario}
             childName={childName}
+            avatarConfig={avatarConfig}
             onInstruction={(text) => speak(text)}
             onSuccess={(text) => speak(text)}
             onComplete={() => onCompleted(fullRecipe.id)}

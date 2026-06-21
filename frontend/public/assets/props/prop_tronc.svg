@@ -1,1 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Tronc d'arbre</title><defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="21"/><feDisplacementMap in="SourceGraphic" scale="1.4"/></filter><linearGradient id="bark" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D99A2B"/><stop offset=".55" stop-color="#B35435"/><stop offset="1" stop-color="#5C3A21"/></linearGradient></defs><g filter="url(#grain)" stroke="#5C3A21" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M42 117 C45 80 68 58 103 58 C139 58 160 81 158 118 C157 150 130 164 96 161 C62 158 38 146 42 117 Z" fill="url(#bark)"/><ellipse cx="101" cy="113" rx="53" ry="42" fill="#D99A2B"/><ellipse cx="101" cy="113" rx="34" ry="25" fill="none"/><ellipse cx="101" cy="113" rx="18" ry="12" fill="none"/><path d="M53 88 C70 96 83 91 98 99 M54 140 C80 128 111 144 142 128" fill="none" stroke="#5C3A21" opacity=".8"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img">
+<defs>
+  <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5"/>
+  </filter>
+  <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#D99A2B"/>
+    <stop offset="0.55" stop-color="#B35435"/>
+    <stop offset="1" stop-color="#5C3A21"/>
+  </linearGradient>
+  <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F4EFE6"/>
+    <stop offset="0.55" stop-color="#6B7280"/>
+    <stop offset="1" stop-color="#5C3A21"/>
+  </linearGradient>
+  <radialGradient id="ember" cx="50%" cy="50%" r="55%">
+    <stop offset="0" stop-color="#FF6B1A"/>
+    <stop offset="0.55" stop-color="#D99A2B"/>
+    <stop offset="1" stop-color="#B35435"/>
+  </radialGradient>
+  <radialGradient id="paper" cx="45%" cy="35%" r="75%">
+    <stop offset="0" stop-color="#F4EFE6"/>
+    <stop offset="1" stop-color="#D99A2B"/>
+  </radialGradient>
+</defs>
+<g filter="url(#grain)" stroke="#5C3A21" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+  <ellipse cx="100" cy="103" rx="66" ry="52" fill="url(#wood)"/>
+  <ellipse cx="100" cy="103" rx="47" ry="35" fill="#D99A2B" opacity="0.75"/>
+  <path d="M65 104 C78 79 122 74 139 99 C149 118 125 137 98 136 C71 135 51 122 65 104 Z" fill="none"/>
+  <path d="M82 103 C90 89 115 87 123 101 C130 112 114 123 99 123 C84 122 75 114 82 103 Z" fill="none"/>
+  <path d="M49 89 C39 99 38 114 49 126" fill="none" stroke="#2E4F3B" opacity="0.7"/>
+  <path d="M151 82 C165 101 164 122 150 139" fill="none"/>
+  <circle cx="101" cy="104" r="4" fill="#5C3A21"/>
+
+</g>
+</svg>

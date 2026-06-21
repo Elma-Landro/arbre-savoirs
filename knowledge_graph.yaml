@@ -110,6 +110,9 @@ recipes:
       background: "atelier_fonderie"
       avatar: "👧"
       elements:
+        - { id: tablier, emoji: "🥋", asset: "avatar_tablier_forgeron", type: "draggable" }
+        - { id: gants, emoji: "🧤", asset: "avatar_gants", type: "draggable" }
+        - { id: zone_preparation, emoji: "🧺", asset: "zone_preparation", type: "dropzone" }
         - { id: minerai, emoji: "🪨", asset: "prop_minerai_fer", type: "draggable" }
         - { id: charbon_elt, emoji: "⚫", asset: "prop_charbon", type: "draggable" }
         - { id: metal_liquide, emoji: "🧪", asset: "prop_metal_liquide", type: "draggable" }
@@ -117,14 +120,22 @@ recipes:
         - { id: moule, emoji: "🧱", asset: "zone_moule_lingot", type: "dropzone" }
       steps:
         - id: 1
+          instruction_tts: "Avant de commencer, mets ton tablier de forgeron pour te protéger, comme un vrai pro !"
+          action_attendue: { type: "drag_and_drop", source: "tablier", target: "zone_preparation" }
+          success_tts: "Super ! Ton tablier est en place, tu es prêt à travailler en sécurité."
+        - id: 2
+          instruction_tts: "N'oublie pas tes gants ! Le métal, ça brûle très fort !"
+          action_attendue: { type: "drag_and_drop", source: "gants", target: "zone_preparation" }
+          success_tts: "Parfait ! Avec tes gants, tes petites mains sont bien protégées."
+        - id: 3
           instruction_tts: "Pour faire naître l'acier, commence par jeter le minerai de fer dans le grand four brûlant !"
           action_attendue: { type: "drag_and_drop", source: "minerai", target: "four" }
           success_tts: "Bravo ! Le minerai de fer plonge dans les flammes et commence à fondre."
-        - id: 2
+        - id: 4
           instruction_tts: "Maintenant, ajoute le charbon pour que le feu soit encore plus chaud !"
           action_attendue: { type: "drag_and_drop", source: "charbon_elt", target: "four" }
           success_tts: "Excellent ! Avec le charbon, la chaleur devient si forte que la roche se transforme en métal liquide."
-        - id: 3
+        - id: 5
           instruction_tts: "Le métal est liquide et brillant ! Verse-le dans le moule pour lui donner une belle forme !"
           action_attendue: { type: "drag_and_drop", source: "metal_liquide", target: "moule" }
           success_tts: "Magnifique ! Le métal refroidit et devient un superbe lingot d'acier tout brillant !"
@@ -144,6 +155,9 @@ recipes:
       background: "atelier_forgeron"
       avatar: "👧"
       elements:
+        - { id: tablier, emoji: "🥋", asset: "avatar_tablier_forgeron", type: "draggable" }
+        - { id: gants, emoji: "🧤", asset: "avatar_gants", type: "draggable" }
+        - { id: zone_preparation, emoji: "🧺", asset: "zone_preparation", type: "dropzone" }
         - { id: lingot, emoji: "🧱", asset: "prop_lingot_acier", type: "draggable" }
         - { id: feu_forge, emoji: "🔥", asset: "zone_feu_forge", type: "dropzone" }
         - { id: enclume, emoji: "⚙️", asset: "zone_enclume", type: "dropzone" }
@@ -151,14 +165,22 @@ recipes:
         - { id: outil, emoji: "⚔️", asset: "result_outil_acier", type: "static" }
       steps:
         - id: 1
+          instruction_tts: "Pour forger en sécurité, enfile d'abord ton tablier de forgeron !"
+          action_attendue: { type: "drag_and_drop", source: "tablier", target: "zone_preparation" }
+          success_tts: "Super ! Ton tablier te protège des étincelles."
+        - id: 2
+          instruction_tts: "Mets aussi tes gants, pour ne pas te brûler les mains avec le métal chaud !"
+          action_attendue: { type: "drag_and_drop", source: "gants", target: "zone_preparation" }
+          success_tts: "Parfait ! Tes mains sont bien à l'abri. On peut commencer !"
+        - id: 3
           instruction_tts: "Pour forger un outil, chauffe d'abord le lingot d'acier dans le feu de la forge !"
           action_attendue: { type: "drag_and_drop", source: "lingot", target: "feu_forge" }
           success_tts: "Parfait ! Le lingot rougeoie, il est maintenant assez chaud pour être façonné."
-        - id: 2
+        - id: 4
           instruction_tts: "Dépose le lingot chaud sur l'enclume pour pouvoir le frapper !"
           action_attendue: { type: "drag_and_drop", source: "lingot", target: "enclume" }
           success_tts: "Très bien ! Le lingot est posé sur l'enclume, prêt à prendre forme."
-        - id: 3
+        - id: 5
           instruction_tts: "Frappe fort avec le marteau pour donner la forme d'un outil !"
           action_attendue: { type: "drag_and_drop", source: "marteau", target: "enclume" }
           success_tts: "Boum, boum, boum ! Avec tes coups de marteau, l'acier devient un magnifique outil. Quel talent de forgeron !"
@@ -176,6 +198,8 @@ recipes:
       background: "foret"
       avatar: "👧"
       elements:
+        - { id: chapeau, emoji: "🧢", asset: "avatar_chapeau_bucheron", type: "draggable" }
+        - { id: zone_preparation, emoji: "🧺", asset: "zone_preparation", type: "dropzone" }
         - { id: tronc, emoji: "🪵", asset: "prop_tronc", type: "both" }
         - { id: billot, emoji: "🪵", asset: "zone_billot", type: "dropzone" }
         - { id: hache, emoji: "🪓", asset: "prop_hache", type: "draggable" }
@@ -183,14 +207,18 @@ recipes:
         - { id: planche, emoji: "🟫", asset: "result_planche", type: "static" }
       steps:
         - id: 1
+          instruction_tts: "Avant d'entrer dans la forêt, mets ton chapeau de bûcheron pour protéger ta tête !"
+          action_attendue: { type: "drag_and_drop", source: "chapeau", target: "zone_preparation" }
+          success_tts: "Super ! Avec ton chapeau, tu ressembles à un vrai bûcheron. En route !"
+        - id: 2
           instruction_tts: "Pose le grand tronc d'arbre sur le billot pour bien le tenir !"
           action_attendue: { type: "drag_and_drop", source: "tronc", target: "billot" }
           success_tts: "Très bien ! Le tronc est bien calé, prêt à être travaillé."
-        - id: 2
+        - id: 3
           instruction_tts: "Prends la hache et frappe le tronc pour le fendre !"
           action_attendue: { type: "drag_and_drop", source: "hache", target: "tronc" }
           success_tts: "Chic ! La hache fend le bois avec un grand bruit satisfaisant."
-        - id: 3
+        - id: 4
           instruction_tts: "Utilise maintenant la scie pour couper de belles planches bien droites !"
           action_attendue: { type: "drag_and_drop", source: "scie", target: "tronc" }
           success_tts: "Génial ! La scie découpe des planches lisses et parfaitement droites. Tu es un vrai bûcheron !"
@@ -211,6 +239,8 @@ recipes:
       background: "atelier_charron"
       avatar: "👧"
       elements:
+        - { id: gants, emoji: "🧤", asset: "avatar_gants", type: "draggable" }
+        - { id: zone_preparation, emoji: "🧺", asset: "zone_preparation", type: "dropzone" }
         - { id: planche, emoji: "🟫", asset: "prop_planche_bois", type: "draggable" }
         - { id: clou, emoji: "📌", asset: "prop_clou", type: "draggable" }
         - { id: roue, emoji: "🛞", asset: "prop_roue_bois", type: "draggable" }
@@ -218,14 +248,18 @@ recipes:
         - { id: marteau_charron, emoji: "🔨", asset: "prop_marteau", type: "draggable" }
       steps:
         - id: 1
+          instruction_tts: "Pour construire sans te faire mal, commence par mettre tes gants de travail !"
+          action_attendue: { type: "drag_and_drop", source: "gants", target: "zone_preparation" }
+          success_tts: "Très bien ! Tes mains sont protégées des échardes et des clous. C'est parti !"
+        - id: 2
           instruction_tts: "Pose les planches de bois sur le chassis pour commencer la charrette !"
           action_attendue: { type: "drag_and_drop", source: "planche", target: "chassis" }
           success_tts: "Bien joué ! Les planches forment le plancher de la charrette."
-        - id: 2
+        - id: 3
           instruction_tts: "Prends les clous et frappe-les avec le marteau pour tout assembler solidement !"
           action_attendue: { type: "drag_and_drop", source: "marteau_charron", target: "chassis" }
           success_tts: "Cloc, cloc ! Les clous enfoncés maintiennent les planches. Quel travail soigné !"
-        - id: 3
+        - id: 4
           instruction_tts: "Fixe les roues de bois pour que la charrette puisse rouler !"
           action_attendue: { type: "drag_and_drop", source: "roue", target: "chassis" }
           success_tts: "Et voilà ! Les roues sont en place. La charrette est prête à rouler. Tu es un excellent charron !"

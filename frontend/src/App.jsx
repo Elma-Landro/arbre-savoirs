@@ -6,16 +6,38 @@ import RecipeList from './pages/RecipeList'
 import ScenePage from './pages/ScenePage'
 import MetaStory from './pages/MetaStory'
 import Contribute from './pages/Contribute'
+import AvatarSelector from './components/AvatarSelector'
 import { useProgress } from './useProgress'
+
+const AVATAR_STORAGE_KEY = 'arbre_savoirs_avatar'
+
+function loadSavedAvatar() {
+  try {
+    const raw = localStorage.getItem(AVATAR_STORAGE_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
 
 export default function App() {
   const [route, setRoute] = useState('home') // home | scene | meta | contribute
   const [activeRecipe, setActiveRecipe] = useState(null)
+  const [avatarConfig, setAvatarConfig] = useState(loadSavedAvatar)
   const progress = useProgress()
 
   function openRecipe(r) {
     setActiveRecipe(r)
     setRoute('scene')
+  }
+
+  function confirmAvatar(config) {
+    setAvatarConfig(config)
+    setRoute('home')
+  }
+
+  if (!avatarConfig) {
+    return <AvatarSelector onConfirm={confirmAvatar} />
   }
 
   return (
@@ -32,6 +54,7 @@ export default function App() {
           )}
         </NavBtn>
         <NavBtn active={route === 'contribute'} onClick={() => setRoute('contribute')}>✍️ Contribuer</NavBtn>
+        <NavBtn active={route === 'avatar'} onClick={() => setRoute('avatar')}>🧒 Modifier mon personnage</NavBtn>
       </nav>
 
       {route === 'home' && (
@@ -41,6 +64,7 @@ export default function App() {
         <ScenePage
           recipe={activeRecipe}
           childName={progress.childName}
+          avatarConfig={avatarConfig}
           onCompleted={progress.markCompleted}
           onBack={() => setRoute('home')}
         />
@@ -51,6 +75,9 @@ export default function App() {
           childName={progress.childName}
           onBack={() => setRoute('home')}
         />
+      )}
+      {route === 'avatar' && (
+        <AvatarSelector initialConfig={avatarConfig} onConfirm={confirmAvatar} />
       )}
       {route === 'contribute' && <Contribute onBack={() => setRoute('home')} />}
 

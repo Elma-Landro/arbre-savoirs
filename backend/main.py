@@ -186,8 +186,11 @@ def api_preload_scene_audio(req: PreloadSceneAudioRequest):
             audios[step_id] = {}
             for field, label in (("instruction_tts", "instruction"), ("success_tts", "success")):
                 text = (step.get(field) or "").strip()
+                # Une étape dont le texte n'est pas encore rédigé ne doit pas
+                # faire échouer le préchargement de toute la scène : on la saute,
+                # le frontend retombera sur /narrate-step à la volée pour cette étape.
                 if not text:
-                    raise HTTPException(422, f"Texte manquant pour step {step_id}/{field}.")
+                    continue
                 path = narrate_story(text, req.child_name)
                 audios[step_id][label] = {
                     "audio_url": f"/api/audio/{path.name}",
