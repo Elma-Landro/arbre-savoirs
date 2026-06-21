@@ -1,0 +1,10 @@
+{
+  "name": "L'Arbre des Savoirs",
+  "short_name": "Savoirs",
+  "description": "Explore les chaînes de savoir-faire à travers des histoires.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fef9e7",
+  "theme_color": "#16a34a",
+  "icons": []
+}

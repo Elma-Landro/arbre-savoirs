@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+/* Animation de secousse pour le feedback d'erreur du drag-and-drop (T2.4). */
+@keyframes wiggle {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px) rotate(-3deg); }
+  40% { transform: translateX(6px) rotate(3deg); }
+  60% { transform: translateX(-4px) rotate(-2deg); }
+  80% { transform: translateX(4px) rotate(2deg); }
+}
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+body {
+  margin: 0;
+  /* Fond papier doux, ton jeunesse et bienveillant. */
+  background: linear-gradient(180deg, #fef9e7 0%, #fef3c7 100%);
+  color: #3b2f2f;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Gros boutons tactiles adaptés aux enfants / tablettes. */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-green-600 px-6 py-4
+           text-lg font-bold text-white shadow-md transition
+           hover:bg-green-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-amber-500 px-6 py-4
+           text-lg font-bold text-white shadow-md transition
+           hover:bg-amber-600 active:scale-95 disabled:opacity-50;
+  }
+  .card {
+    @apply rounded-3xl bg-white/90 p-5 shadow-lg border-2 border-amber-100;
+  }
+}

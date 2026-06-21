@@ -1,0 +1,231 @@
+# =============================================================================
+#  Graphe de Connaissances — "L'Arbre des Savoirs" (V2 — Jeu de scène interactif)
+#
+#  Format standardisé (Framework contributif). Éditable par des non-développeurs.
+#
+#  Deux sections :
+#    - nodes    : entités (matériaux, outils, savoir-faire, concepts)
+#                 champs requis : id, label, type, description, emoji
+#    - recipes  : recettes de transformation jouées dans une SCÈNE INTERACTIVE
+#                 champs requis : id, titre, metier, ingredients, resultat,
+#                                 scenario (background, elements, steps)
+#
+#  Bloc scenario (moteur de scène) :
+#    background : clé de décor (-> dégradé CSS côté frontend)
+#    avatar     : emoji de l'enfant dans la scène
+#    elements   : objets présents, id unique + emoji + type
+#                 types : "draggable" (saisissable) | "dropzone" (cible de dépôt)
+#                 | "static" (décor immobile)
+#    steps      : étapes séquentielles (au moins 2)
+#      - instruction_tts   : consigne lue au début de l'étape
+#      - action_attendue   : { type: drag_and_drop | click, source, target }
+#                            source/target référencent des ids d'elements
+#      - success_tts       : félicitation lue quand l'action est validée
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# NŒUDS
+# -----------------------------------------------------------------------------
+nodes:
+  # --- Chaîne du métal -------------------------------------------------------
+  - id: minerai_fer
+    label: "Minerai de fer"
+    type: materiau
+    emoji: "🪨"
+    description: "Roche rougeâtre tirée de la terre, qui contient le fer caché à l'intérieur."
+
+  - id: charbon
+    label: "Charbon"
+    type: materiau
+    emoji: "⚫"
+    description: "Roche noire qui brûle très longtemps et dégage une grande chaleur."
+
+  - id: chaleur
+    label: "Chaleur extrême"
+    type: concept
+    emoji: "🔥"
+    description: "Une température si élevée qu'elle peut faire fondre la roche et transformer les matériaux."
+
+  - id: lingot_acier
+    label: "Lingot d'acier"
+    type: materiau
+    emoji: "🧱"
+    description: "Bloc de métal brillant et solide, obtenu en purifiant le minerai de fer."
+
+  - id: outil_acier
+    label: "Outil en acier"
+    type: objet
+    emoji: "⚔️"
+    description: "Un objet utile forgé dans le métal, par exemple un marteau ou une lame."
+
+  # --- Chaîne du bois --------------------------------------------------------
+  - id: bois_brut
+    label: "Tronc d'arbre"
+    type: materiau
+    emoji: "🪵"
+    description: "Le grand tronc vert d'un arbre abattu, encore couvert d'écorce."
+
+  - id: planche_bois
+    label: "Planche de bois"
+    type: materiau
+    emoji: "🟫"
+    description: "Une planche lisse et droite, obtenue en découpant le tronc d'arbre."
+
+  - id: clou_fer
+    label: "Clou en fer"
+    type: objet
+    emoji: "📌"
+    description: "Petite tige de métal pointue qui sert à assembler le bois."
+
+  - id: roue_bois
+    label: "Roue en bois"
+    type: objet
+    emoji: "🛞"
+    description: "Un cercle de bois qui tourne et permet aux choses de rouler."
+
+  - id: charrette
+    label: "Charrette"
+    type: objet
+    emoji: "🛒"
+    description: "Un petit véhicule à roues pour transporter de lourdes charges."
+
+# -----------------------------------------------------------------------------
+# RECETTES (scènes interactives)
+# -----------------------------------------------------------------------------
+recipes:
+  # === Chaîne métal : minerai -> acier -> outil ==============================
+  - id: recette_fonte
+    titre: "La naissance de l'acier"
+    metier: "Fondeur"
+    ingredients:
+      - id: minerai_fer
+        quantite: 1
+      - id: charbon
+        quantite: 1
+      - id: chaleur
+        quantite: 1
+    resultat:
+      - id: lingot_acier
+    scenario:
+      background: "atelier_fonderie"
+      avatar: "👧"
+      elements:
+        - { id: minerai, emoji: "🪨", type: "draggable" }
+        - { id: charbon_elt, emoji: "⚫", type: "draggable" }
+        - { id: metal_liquide, emoji: "🧪", type: "draggable" }
+        - { id: four, emoji: "🔥", type: "dropzone" }
+        - { id: moule, emoji: "🧱", type: "dropzone" }
+      steps:
+        - id: 1
+          instruction_tts: "Pour faire naître l'acier, commence par jeter le minerai de fer dans le grand four brûlant !"
+          action_attendue: { type: "drag_and_drop", source: "minerai", target: "four" }
+          success_tts: "Bravo ! Le minerai de fer plonge dans les flammes et commence à fondre."
+        - id: 2
+          instruction_tts: "Maintenant, ajoute le charbon pour que le feu soit encore plus chaud !"
+          action_attendue: { type: "drag_and_drop", source: "charbon_elt", target: "four" }
+          success_tts: "Excellent ! Avec le charbon, la chaleur devient si forte que la roche se transforme en métal liquide."
+        - id: 3
+          instruction_tts: "Le métal est liquide et brillant ! Verse-le dans le moule pour lui donner une belle forme !"
+          action_attendue: { type: "drag_and_drop", source: "metal_liquide", target: "moule" }
+          success_tts: "Magnifique ! Le métal refroidit et devient un superbe lingot d'acier tout brillant !"
+
+  - id: recette_forge
+    titre: "Le souffle du forgeron"
+    metier: "Forgeron"
+    ingredients:
+      - id: lingot_acier
+        quantite: 1
+      - id: chaleur
+        quantite: 1
+    resultat:
+      - id: outil_acier
+      - id: clou_fer
+    scenario:
+      background: "atelier_forgeron"
+      avatar: "👧"
+      elements:
+        - { id: lingot, emoji: "🧱", type: "draggable" }
+        - { id: feu_forge, emoji: "🔥", type: "dropzone" }
+        - { id: enclume, emoji: "⚙️", type: "dropzone" }
+        - { id: marteau, emoji: "🔨", type: "draggable" }
+        - { id: outil, emoji: "⚔️", type: "static" }
+      steps:
+        - id: 1
+          instruction_tts: "Pour forger un outil, chauffe d'abord le lingot d'acier dans le feu de la forge !"
+          action_attendue: { type: "drag_and_drop", source: "lingot", target: "feu_forge" }
+          success_tts: "Parfait ! Le lingot rougeoie, il est maintenant assez chaud pour être façonné."
+        - id: 2
+          instruction_tts: "Dépose le lingot chaud sur l'enclume pour pouvoir le frapper !"
+          action_attendue: { type: "drag_and_drop", source: "lingot", target: "enclume" }
+          success_tts: "Très bien ! Le lingot est posé sur l'enclume, prêt à prendre forme."
+        - id: 3
+          instruction_tts: "Frappe fort avec le marteau pour donner la forme d'un outil !"
+          action_attendue: { type: "drag_and_drop", source: "marteau", target: "enclume" }
+          success_tts: "Boum, boum, boum ! Avec tes coups de marteau, l'acier devient un magnifique outil. Quel talent de forgeron !"
+
+  # === Chaîne bois ===========================================================
+  - id: recette_bucheronnage
+    titre: "Le chant de la forêt"
+    metier: "Bûcheron"
+    ingredients:
+      - id: bois_brut
+        quantite: 1
+    resultat:
+      - id: planche_bois
+    scenario:
+      background: "foret"
+      avatar: "👧"
+      elements:
+        - { id: tronc, emoji: "🪵", type: "both" }
+        - { id: billot, emoji: "🪵", type: "dropzone" }
+        - { id: hache, emoji: "🪓", type: "draggable" }
+        - { id: scie, emoji: "🪚", type: "draggable" }
+        - { id: planche, emoji: "🟫", type: "static" }
+      steps:
+        - id: 1
+          instruction_tts: "Pose le grand tronc d'arbre sur le billot pour bien le tenir !"
+          action_attendue: { type: "drag_and_drop", source: "tronc", target: "billot" }
+          success_tts: "Très bien ! Le tronc est bien calé, prêt à être travaillé."
+        - id: 2
+          instruction_tts: "Prends la hache et frappe le tronc pour le fendre !"
+          action_attendue: { type: "drag_and_drop", source: "hache", target: "tronc" }
+          success_tts: "Chic ! La hache fend le bois avec un grand bruit satisfaisant."
+        - id: 3
+          instruction_tts: "Utilise maintenant la scie pour couper de belles planches bien droites !"
+          action_attendue: { type: "drag_and_drop", source: "scie", target: "tronc" }
+          success_tts: "Génial ! La scie découpe des planches lisses et parfaitement droites. Tu es un vrai bûcheron !"
+
+  - id: recette_charronnage
+    titre: "La charrette qui roule"
+    metier: "Charron"
+    ingredients:
+      - id: planche_bois
+        quantite: 1
+      - id: clou_fer
+        quantite: 1
+      - id: roue_bois
+        quantite: 1
+    resultat:
+      - id: charrette
+    scenario:
+      background: "atelier_charron"
+      avatar: "👧"
+      elements:
+        - { id: planche, emoji: "🟫", type: "draggable" }
+        - { id: clou, emoji: "📌", type: "draggable" }
+        - { id: roue, emoji: "🛞", type: "draggable" }
+        - { id: chassis, emoji: "🛒", type: "dropzone" }
+        - { id: marteau_charron, emoji: "🔨", type: "draggable" }
+      steps:
+        - id: 1
+          instruction_tts: "Pose les planches de bois sur le chassis pour commencer la charrette !"
+          action_attendue: { type: "drag_and_drop", source: "planche", target: "chassis" }
+          success_tts: "Bien joué ! Les planches forment le plancher de la charrette."
+        - id: 2
+          instruction_tts: "Prends les clous et frappe-les avec le marteau pour tout assembler solidement !"
+          action_attendue: { type: "drag_and_drop", source: "marteau_charron", target: "chassis" }
+          success_tts: "Cloc, cloc ! Les clous enfoncés maintiennent les planches. Quel travail soigné !"
+        - id: 3
+          instruction_tts: "Fixe les roues de bois pour que la charrette puisse rouler !"
+          action_attendue: { type: "drag_and_drop", source: "roue", target: "chassis" }
+          success_tts: "Et voilà ! Les roues sont en place. La charrette est prête à rouler. Tu es un excellent charron !"
