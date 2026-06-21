@@ -1,6 +1,18 @@
 // api.js — petit client fetch vers le backend FastAPI (proxy /api en dev).
 
 const BASE = '/api'
+const TIMEOUT_MS = 10_000
+
+function fetchWithTimeout(url, options = {}) {
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS)
+  return fetch(url, { ...options, signal: ctrl.signal })
+    .finally(() => clearTimeout(timer))
+    .catch((err) => {
+      if (err.name === 'AbortError') throw new Error('Le serveur ne répond pas. Réessaie dans un moment.')
+      throw err
+    })
+}
 
 async function jsonOrThrow(res) {
   const text = await res.text()
@@ -18,19 +30,17 @@ async function jsonOrThrow(res) {
 }
 
 export async function fetchRecipes() {
-  const res = await fetch(`${BASE}/recipes`)
+  const res = await fetchWithTimeout(`${BASE}/recipes`)
   return jsonOrThrow(res)
 }
 
 export async function fetchRecipe(recipeId) {
-  // Récupère une recette AVEC son scenario (pour le moteur de scène).
-  const res = await fetch(`${BASE}/recipe/${encodeURIComponent(recipeId)}`)
+  const res = await fetchWithTimeout(`${BASE}/recipe/${encodeURIComponent(recipeId)}`)
   return jsonOrThrow(res)
 }
 
 export async function generateScenario(recipeId, childName) {
-  // Objectif 4 : génère un scenario par LLM.
-  const res = await fetch(`${BASE}/generate-scenario`, {
+  const res = await fetchWithTimeout(`${BASE}/generate-scenario`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ recipe_id: recipeId, child_name: childName }),
@@ -38,9 +48,8 @@ export async function generateScenario(recipeId, childName) {
   return jsonOrThrow(res)
 }
 
-// Narration TTS : /api/narrate (bloc) ou /api/narrate-step (une phrase courte).
 export async function narrateStep(text, childName) {
-  const res = await fetch(`${BASE}/narrate-step`, {
+  const res = await fetchWithTimeout(`${BASE}/narrate-step`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text, child_name: childName }),
@@ -49,7 +58,7 @@ export async function narrateStep(text, childName) {
 }
 
 export async function narrate(text, childName) {
-  const res = await fetch(`${BASE}/narrate`, {
+  const res = await fetchWithTimeout(`${BASE}/narrate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text, child_name: childName }),
@@ -58,7 +67,7 @@ export async function narrate(text, childName) {
 }
 
 export async function generateMetaStory(recipeIds, childName) {
-  const res = await fetch(`${BASE}/meta-story`, {
+  const res = await fetchWithTimeout(`${BASE}/meta-story`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ recipe_ids: recipeIds, child_name: childName }),
@@ -67,7 +76,7 @@ export async function generateMetaStory(recipeIds, childName) {
 }
 
 export async function validateContribution(kind, data) {
-  const res = await fetch(`${BASE}/validate-contribution`, {
+  const res = await fetchWithTimeout(`${BASE}/validate-contribution`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ kind, data }),
