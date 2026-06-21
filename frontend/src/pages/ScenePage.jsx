@@ -9,7 +9,7 @@
 // de la prochaine étape sans dépendre d'un <audio> unique.
 
 import { useEffect, useRef, useState } from 'react'
-import { fetchRecipe, narrateStep } from '../api'
+import { fetchRecipe, narrateStep, preloadSceneAudio } from '../api'
 import Scene from '../components/Scene'
 
 export default function ScenePage({ recipe, childName, onCompleted, onBack }) {
@@ -17,6 +17,7 @@ export default function ScenePage({ recipe, childName, onCompleted, onBack }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [audioUrl, setAudioUrl] = useState('')
+  const [preloadedAudios, setPreloadedAudios] = useState({})
   const [narrating, setNarrating] = useState(false)
   const [audioUnavailable, setAudioUnavailable] = useState(false)
   const [stepVersion, setStepVersion] = useState(0) // incrémenté à chaque changement d'étape
@@ -28,9 +29,28 @@ export default function ScenePage({ recipe, childName, onCompleted, onBack }) {
     setLoading(true)
     setError('')
     setFullRecipe(null)
+    setPreloadedAudios({})
     fetchRecipe(recipe.id)
-      .then((data) => {
+      .then(async (data) => {
+        let audioByText = {}
+        try {
+          const preload = await preloadSceneAudio(recipe.id, childName)
+          const steps = data.scenario?.steps || []
+          audioByText = steps.reduce((acc, step) => {
+            const pair = preload.audios?.[String(step.id)] || {}
+            if (step.instruction_tts && pair.instruction?.audio_url) {
+              acc[step.instruction_tts] = pair.instruction.audio_url
+            }
+            if (step.success_tts && pair.success?.audio_url) {
+              acc[step.success_tts] = pair.success.audio_url
+            }
+            return acc
+          }, {})
+        } catch (e) {
+          console.warn('Préchargement TTS indisponible, fallback narrate-step :', e.message)
+        }
         if (!cancelled) {
+          setPreloadedAudios(audioByText)
           setFullRecipe(data)
           setLoading(false)
         }
@@ -48,23 +68,32 @@ export default function ScenePage({ recipe, childName, onCompleted, onBack }) {
         audioRef.current = null
       }
     }
-  }, [recipe.id])
+  }, [recipe.id, childName])
 
-  // Narration : synthétise un texte court et le joue.
+  async function playAudioUrl(url) {
+    if (!url) return
+    if (audioRef.current) audioRef.current.pause()
+    const a = new Audio(url)
+    audioRef.current = a
+    setAudioUrl(url)
+    // Propage l'échec d'autoplay pour activer le feedback d'indisponibilité.
+    await a.play()
+  }
+
+  // Narration : lit une piste préchargée si disponible, sinon synthétise un texte court.
   async function speak(text) {
     if (!text) return
     setNarrating(true)
     try {
+      const cachedUrl = preloadedAudios[text]
+      if (cachedUrl) {
+        await playAudioUrl(cachedUrl)
+        return
+      }
       const data = await narrateStep(text, childName)
-      if (audioRef.current) audioRef.current.pause()
-      const a = new Audio(data.audio_url)
-      audioRef.current = a
-      setAudioUrl(data.audio_url)
-      await a.play().catch(() => {
-        // Autoplay bloqué (Safari/iOS) ou fichier inaccessible.
-        setAudioUnavailable(true)
-      })
+      await playAudioUrl(data.audio_url)
     } catch {
+      // Autoplay bloqué (Safari/iOS), fichier inaccessible, ou TTS indisponible.
       setAudioUnavailable(true)
     } finally {
       setNarrating(false)

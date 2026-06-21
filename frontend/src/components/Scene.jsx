@@ -13,6 +13,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { DndContext, useDraggable, useDroppable, PointerSensor, useSensor } from '@dnd-kit/core'
+import GameAsset from './GameAsset'
 
 // Dégradés CSS associés aux clés de `background` (Règle 3 : pas de beaux assets).
 const BACKGROUNDS = {
@@ -23,7 +24,7 @@ const BACKGROUNDS = {
   celebration: 'linear-gradient(180deg,#1e3a8a 0%,#7c3aed 50%,#f472b6 100%)',
 }
 
-function Draggable({ id, emoji, label, disabled, wrong }) {
+function Draggable({ id, emoji, asset, label, disabled, wrong }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id, disabled })
   const style = {
     transform: transform ? `translate3d(${transform.x}px,${transform.y}px,0)` : undefined,
@@ -42,13 +43,13 @@ function Draggable({ id, emoji, label, disabled, wrong }) {
       data-dnd-draggable={id}
       className={`select-none flex flex-col items-center justify-center rounded-2xl bg-white/85 p-3 shadow-lg ${anim}`}
     >
-      <span className="text-5xl leading-none">{emoji}</span>
+      <GameAsset assetId={asset} emoji={emoji} label={label || id} />
       {label && <span className="text-xs mt-1 font-semibold text-stone-600">{label}</span>}
     </div>
   )
 }
 
-function Dropzone({ id, emoji, label, highlight, wrong, children }) {
+function Dropzone({ id, emoji, asset, label, highlight, wrong, children }) {
   const { setNodeRef, isOver } = useDroppable({ id })
   const ring = highlight ? 'ring-4 ring-amber-300' : ''
   const over = isOver ? 'ring-4 ring-green-400 scale-105' : ''
@@ -64,7 +65,7 @@ function Dropzone({ id, emoji, label, highlight, wrong, children }) {
         children
       ) : (
         <>
-          <span className="text-5xl leading-none">{emoji}</span>
+          <GameAsset assetId={asset} emoji={emoji} label={label || id} />
           {label && <span className="text-xs mt-1 font-semibold text-white drop-shadow">{label}</span>}
         </>
       )}
@@ -74,7 +75,7 @@ function Dropzone({ id, emoji, label, highlight, wrong, children }) {
 
 // Draggable "intérieur" : pour un élément "both", on rend un draggable à
 // l'intérieur d'une dropzone (l'enfant peut le saisir ET y déposer).
-function DraggableInner({ id, emoji, disabled, wrong }) {
+function DraggableInner({ id, emoji, asset, disabled, wrong }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id, disabled })
   const style = {
     transform: transform ? `translate3d(${transform.x}px,${transform.y}px,0)` : undefined,
@@ -92,15 +93,15 @@ function DraggableInner({ id, emoji, disabled, wrong }) {
       data-dnd-draggable={id}
       className={`select-none rounded-xl bg-white/85 p-2 shadow ${anim}`}
     >
-      <span className="text-4xl leading-none">{emoji}</span>
+      <GameAsset assetId={asset} emoji={emoji} label={id} size="md" />
     </div>
   )
 }
 
-function StaticElt({ emoji, label }) {
+function StaticElt({ id, emoji, asset, label }) {
   return (
     <div data-testid={`elt-${emoji}`} className="flex flex-col items-center justify-center p-3">
-      <span className="text-5xl leading-none">{emoji}</span>
+      <GameAsset assetId={asset} emoji={emoji} label={label || id} />
       {label && <span className="text-xs mt-1 font-semibold text-white/80 drop-shadow">{label}</span>}
     </div>
   )
@@ -194,9 +195,9 @@ export default function Scene({ scenario, childName, onComplete, onInstruction, 
               // et déposable (utile p.ex. pour reprendre un objet déjà posé).
               if (el.type === 'both') {
                 return (
-                  <Dropzone key={el.id} id={el.id} emoji={el.emoji} label={el.label}
+                  <Dropzone key={el.id} id={el.id} emoji={el.emoji} asset={el.asset} label={el.label}
                             highlight={el.id === expectedTarget} wrong={isWrongTgt}>
-                    <DraggableInner id={el.id} emoji={el.emoji}
+                    <DraggableInner id={el.id} emoji={el.emoji} asset={el.asset}
                                     disabled={el.id !== expectedSource} wrong={isWrongSrc} />
                   </Dropzone>
                 )
@@ -204,18 +205,18 @@ export default function Scene({ scenario, childName, onComplete, onInstruction, 
               if (el.type === 'draggable') {
                 return (
                   <Draggable
-                    key={el.id} id={el.id} emoji={el.emoji}
+                    key={el.id} id={el.id} emoji={el.emoji} asset={el.asset}
                     disabled={el.id !== expectedSource} wrong={isWrongSrc}
                   />
                 )
               }
               if (el.type === 'dropzone') {
                 return (
-                  <Dropzone key={el.id} id={el.id} emoji={el.emoji} label={el.label}
+                  <Dropzone key={el.id} id={el.id} emoji={el.emoji} asset={el.asset} label={el.label}
                             highlight={el.id === expectedTarget} wrong={isWrongTgt} />
                 )
               }
-              return <StaticElt key={el.id} emoji={el.emoji} />
+              return <StaticElt key={el.id} id={el.id} emoji={el.emoji} asset={el.asset} />
             })}
           </div>
         </DndContext>

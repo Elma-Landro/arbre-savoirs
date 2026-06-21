@@ -2,6 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { fetchRecipes } from '../api'
+import GameAsset from '../components/GameAsset'
+
+const RECIPE_ICON_BY_ID = {
+  recette_fonte: 'icon_fondeur',
+  recette_forge: 'icon_forgeron',
+  recette_bucheronnage: 'icon_bucheron',
+  recette_charronnage: 'icon_charron',
+}
 
 export default function RecipeList({ progress, onOpen }) {
   const [recipes, setRecipes] = useState([])
@@ -56,6 +64,7 @@ export default function RecipeList({ progress, onOpen }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {recipes.map((r) => {
           const done = progress.isCompleted(r.id)
+          const iconAsset = RECIPE_ICON_BY_ID[r.id]
           return (
             <button
               key={r.id}
@@ -65,7 +74,14 @@ export default function RecipeList({ progress, onOpen }) {
               }`}
             >
               <div className="flex items-start justify-between gap-2">
-                <h2 className="text-2xl font-bold text-amber-800">{r.titre}</h2>
+                <div className="flex items-start gap-3">
+                  {iconAsset && (
+                    <div className="shrink-0 rounded-2xl bg-amber-50 p-2 shadow" aria-hidden="true">
+                      <GameAsset assetId={iconAsset} emoji="✨" label={r.metier} size="md" />
+                    </div>
+                  )}
+                  <h2 className="text-2xl font-bold text-amber-800">{r.titre}</h2>
+                </div>
                 {done && <span className="text-3xl" title="Complétée">✅</span>}
               </div>
               <p className="text-sm uppercase tracking-wide text-green-600 font-semibold mt-1">
