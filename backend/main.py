@@ -67,6 +67,11 @@ class GenerateScenarioRequest(BaseModel):
     child_name: str = "Léa"
 
 
+class PreloadSceneAudioRequest(BaseModel):
+    recipe_id: str
+    child_name: str = "Léa"
+
+
 class ContributionRequest(BaseModel):
     """Une contribution (nœud OU recette) soumise via /contribute."""
     kind: str  # "node" | "recipe"
@@ -152,6 +157,44 @@ def api_narrate_step(req: NarrateRequest):
     except TtsBlocked as e:
         raise HTTPException(503, f"Synthèse audio indisponible : {e}")
     return {"audio_url": f"/api/audio/{path.name}", "filename": path.name}
+
+
+@app.post("/api/preload-scene-audio")
+def api_preload_scene_audio(req: PreloadSceneAudioRequest):
+    """Pré-génère tous les audios courts d'une scène.
+
+    Produit les pistes `instruction_tts` et `success_tts` de chaque étape en une
+    seule requête. Le nom de fichier hashé par `narrate_story` sert de cache :
+    un texte déjà synthétisé n'est pas régénéré inutilement.
+    """
+    if req.recipe_id not in GRAPH.recipes_by_id:
+        raise HTTPException(404, f"Recette inconnue : {req.recipe_id}")
+    recipe = GRAPH.recipe(req.recipe_id)
+    scenario = recipe.get("scenario") or {}
+    steps = scenario.get("steps") or []
+    if not steps:
+        raise HTTPException(422, "La recette ne contient aucun scénario audio préchargeable.")
+
+    audios: dict[str, dict[str, dict[str, str]]] = {}
+    count = 0
+    try:
+        for step in steps:
+            step_id = str(step.get("id"))
+            audios[step_id] = {}
+            for field, label in (("instruction_tts", "instruction"), ("success_tts", "success")):
+                text = (step.get(field) or "").strip()
+                if not text:
+                    raise HTTPException(422, f"Texte manquant pour step {step_id}/{field}.")
+                path = narrate_story(text, req.child_name)
+                audios[step_id][label] = {
+                    "audio_url": f"/api/audio/{path.name}",
+                    "filename": path.name,
+                }
+                count += 1
+    except TtsBlocked as e:
+        raise HTTPException(503, f"Préchargement audio indisponible : {e}")
+
+    return {"recipe_id": req.recipe_id, "count": count, "audios": audios}
 
 
 # ============================================================================

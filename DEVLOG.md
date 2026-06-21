@@ -17,6 +17,14 @@ Convention : chaque entrée note date/heure, objectif, test, résultat (PASS/FAI
 
 ---
 
+## Reprise Hermes / projet local
+
+- **2026-06-21 08:21 UTC** — Création du contexte de reprise Hermes dans le dépôt local : `AGENTS.md` synthétise les conventions de travail, la stack, les points techniques à préserver et la prochaine priorité ; `docs/HANDOFF_PROMPT.md` conserve le prompt de reprise complet fourni par Maël. Résultat : projet prêt à être retravaillé depuis `/workspace/arbre-savoirs` sous le profil Hermes `default`.
+- **2026-06-21 11:33 UTC** — Clarification importante : `/workspace/arbre-savoirs` est le workspace Hermes, distinct du terminal local Ubuntu de Maël (`~/`). Installation frontend vérifiée : `frontend/node_modules` présent et `npm run build` **PASS** (`vite build`, 42 modules transformés, build en 1.26s). Installation backend effectuée dans le workspace Hermes avec `uv pip install --python .venv/bin/python pyyaml requests fastapi "uvicorn[standard]" python-multipart gTTS mutagen` : **PASS** (26 packages installés). Tests réels exécutés : `tests/test_objective1_graph.py` **PASS**, `tests/test_audio_unique.py` **PASS**, `tests/test_objective3_tts.py` **PASS**. `tests/test_objective4_scenario.py` **BLOCKED** : aucune clé LLM trouvée (`ARBRE_LLM_API_KEY`/ZCode absents dans l'environnement Hermes).
+- **2026-06-21 11:41 UTC** — Priorité UX #1 implémentée : endpoint `POST /api/preload-scene-audio` ajouté dans `backend/main.py` pour générer en une seule requête les pistes `instruction_tts` et `success_tts` de chaque étape. Frontend : `preloadSceneAudio()` ajouté dans `frontend/src/api.js`, puis `ScenePage.jsx` précharge les audios à l'ouverture de la scène et lit les URLs préchargées avant fallback `narrate-step`. Tests réels : `tests/test_preload_scene_audio.py` **PASS** (6 pistes réelles préchargées pour `recette_fonte`), `tests/test_objective1_graph.py` **PASS**, `tests/test_audio_unique.py` **PASS**, `tests/test_objective3_tts.py` **PASS**, `frontend/tests/e2e_preload_audio_static.mjs` **PASS**, `npm run build` **PASS**.
+
+---
+
 ## Objectif 1 — Graphe de connaissances minimal chargeable
 
 - **2026-06-20** — Implémentation : `knowledge_graph.yaml` (10 nœuds, 4 recettes), `backend/graph_engine.py` (chargement/validation/traversée), `tests/test_objective1_graph.py`.

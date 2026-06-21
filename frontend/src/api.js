@@ -48,6 +48,15 @@ export async function narrateStep(text, childName) {
   return jsonOrThrow(res)
 }
 
+export async function preloadSceneAudio(recipeId, childName) {
+  const res = await fetch(`${BASE}/preload-scene-audio`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ recipe_id: recipeId, child_name: childName }),
+  })
+  return jsonOrThrow(res)
+}
+
 export async function narrate(text, childName) {
   const res = await fetch(`${BASE}/narrate`, {
     method: 'POST',
