@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" role="img"><title>Forêt douce</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4EFE6"/><stop offset="1" stop-color="#D99A2B" stop-opacity=".55"/></linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E4F3B" stop-opacity=".45"/><stop offset="1" stop-color="#5C3A21" stop-opacity=".82"/></linearGradient>
+    <filter id="forestGrain"><feTurbulence type="fractalNoise" baseFrequency=".015" numOctaves="4" seed="37"/><feDisplacementMap in="SourceGraphic" scale="5"/></filter>
+  </defs>
+  <rect width="1200" height="700" fill="url(#sky)"/>
+  <circle cx="1010" cy="124" r="72" fill="#D99A2B" opacity=".4"/>
+  <g filter="url(#forestGrain)" stroke="#5C3A21" stroke-width="11" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 494 C176 434 332 440 486 472 C666 508 821 472 1004 429 C1089 412 1152 419 1200 436 L1200 700 L0 700 Z" fill="url(#ground)" stroke="none"/>
+    <g opacity=".85">
+      <path d="M88 470 L88 257"/><path d="M24 334 C56 240 114 199 177 335 Z" fill="#2E4F3B"/>
+      <path d="M249 489 L249 218"/><path d="M171 319 C215 206 288 170 353 323 Z" fill="#2E4F3B" opacity=".95"/>
+      <path d="M514 478 L514 245"/><path d="M439 338 C477 226 551 190 624 340 Z" fill="#2E4F3B" opacity=".88"/>
+      <path d="M790 482 L790 229"/><path d="M708 329 C754 213 833 183 902 329 Z" fill="#2E4F3B" opacity=".91"/>
+      <path d="M1050 473 L1050 249"/><path d="M980 342 C1015 232 1084 199 1156 344 Z" fill="#2E4F3B" opacity=".87"/>
+    </g>
+    <path d="M100 575 C260 539 395 549 520 575 C680 610 821 587 981 549" fill="none" opacity=".27"/>
+    <path d="M64 627 C230 591 393 606 553 627 C731 651 903 624 1090 591" fill="none" opacity=".22"/>
+  </g>
+</svg>

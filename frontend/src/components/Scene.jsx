@@ -24,6 +24,9 @@ const BACKGROUNDS = {
   atelier_charron: 'linear-gradient(180deg,#78350f 0%,#a16207 50%,#fde68a 100%)',
   celebration: 'linear-gradient(180deg,#1e3a8a 0%,#7c3aed 50%,#f472b6 100%)',
 }
+const IMAGE_BACKGROUNDS = {
+  foret_bucheron: '/assets/zones/bg_foret_bucheron.svg',
+}
 
 function Draggable({ id, emoji, asset, label, disabled, wrong }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id, disabled })
@@ -122,10 +125,8 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
   const expectedSource = step?.action_attendue?.source
   const expectedTarget = step?.action_attendue?.target
 
-  const bg = useMemo(
-    () => BACKGROUNDS[scenario.background] || BACKGROUNDS.foret,
-    [scenario.background],
-  )
+  const bgSrc = IMAGE_BACKGROUNDS[scenario.background]
+  const bgCss = BACKGROUNDS[scenario.background] || BACKGROUNDS.foret
 
   // T3.2 — à chaque étape (y compris la 1re au montage), on annonce l'instruction.
   useEffect(() => {
@@ -170,7 +171,14 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
   return (
     <div data-testid="scene" className="rounded-3xl overflow-hidden shadow-xl border-4 border-white/50">
       {/* Décor (T2.1) */}
-      <div className="relative p-6 min-h-[420px] flex flex-col" style={{ background: bg }}>
+      <div
+        className="relative p-6 min-h-[420px] flex flex-col"
+        style={
+          bgSrc
+            ? { backgroundImage: `url(${bgSrc})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+            : { background: bgCss }
+        }
+      >
         <div className="flex items-center justify-between mb-4">
           {/* Avatar de l'enfant — coin supérieur gauche, avec fallback emoji */}
           <div

@@ -1,38 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img">
-<defs>
-  <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
-    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5"/>
-  </filter>
-  <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#D99A2B"/>
-    <stop offset="0.55" stop-color="#B35435"/>
-    <stop offset="1" stop-color="#5C3A21"/>
-  </linearGradient>
-  <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#F4EFE6"/>
-    <stop offset="0.55" stop-color="#6B7280"/>
-    <stop offset="1" stop-color="#5C3A21"/>
-  </linearGradient>
-  <radialGradient id="ember" cx="50%" cy="50%" r="55%">
-    <stop offset="0" stop-color="#FF6B1A"/>
-    <stop offset="0.55" stop-color="#D99A2B"/>
-    <stop offset="1" stop-color="#B35435"/>
-  </radialGradient>
-  <radialGradient id="paper" cx="45%" cy="35%" r="75%">
-    <stop offset="0" stop-color="#F4EFE6"/>
-    <stop offset="1" stop-color="#D99A2B"/>
-  </radialGradient>
-</defs>
-<g filter="url(#grain)" stroke="#5C3A21" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Tronc illustré</title>
+  <defs>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.024" numOctaves="3" seed="89"/>
+      <feDisplacementMap in="SourceGraphic" scale="3"/>
+    </filter>
+    <filter id="softShadow">
+      <feDropShadow dx="2" dy="3" stdDeviation="3" flood-color="#5C3A21" flood-opacity="0.35"/>
+    </filter>
+    <linearGradient id="woodWarm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D99A2B"/>
+      <stop offset=".65" stop-color="#B35435"/>
+      <stop offset="1" stop-color="#5C3A21"/>
+    </linearGradient>
+    <linearGradient id="leafy" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2E4F3B"/>
+      <stop offset="1" stop-color="#D99A2B" stop-opacity=".3"/>
+    </linearGradient>
+    <linearGradient id="steelSoft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F4EFE6"/>
+      <stop offset=".5" stop-color="#6B7280"/>
+      <stop offset="1" stop-color="#5C3A21"/>
+    </linearGradient>
+  </defs>
 
-  <ellipse cx="100" cy="103" rx="66" ry="52" fill="url(#wood)"/>
-  <ellipse cx="100" cy="103" rx="47" ry="35" fill="#D99A2B" opacity="0.75"/>
-  <path d="M65 104 C78 79 122 74 139 99 C149 118 125 137 98 136 C71 135 51 122 65 104 Z" fill="none"/>
-  <path d="M82 103 C90 89 115 87 123 101 C130 112 114 123 99 123 C84 122 75 114 82 103 Z" fill="none"/>
-  <path d="M49 89 C39 99 38 114 49 126" fill="none" stroke="#2E4F3B" opacity="0.7"/>
-  <path d="M151 82 C165 101 164 122 150 139" fill="none"/>
-  <circle cx="101" cy="104" r="4" fill="#5C3A21"/>
-
-</g>
+  <g filter="url(#softShadow)">
+    <g filter="url(#grain)" stroke="#5C3A21" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M66 51 C77 42 96 40 115 44 C134 48 148 58 153 76 C159 98 150 120 154 142 C137 156 109 161 82 156 C59 152 46 140 47 122 C48 104 57 90 53 74 C52 66 56 58 66 51 Z" fill="url(#woodWarm)"/>
+      <path d="M83 93 C84 83 96 78 108 83 C118 88 112 100 101 100 C91 100 84 96 83 93 Z" fill="#F4EFE6" opacity=".9"/>
+      <path d="M92 94 C94 88 104 88 107 95 C110 100 103 103 98 102 C93 101 91 98 92 94 Z" fill="none" stroke-width="2.2"/>
+      <path d="M56 75 C77 84 124 80 155 92" fill="none" opacity=".55"/>
+      <path d="M55 126 C79 137 121 133 153 143" fill="none" opacity=".55"/>
+      <path d="M54 59 C45 48 44 38 52 30 C62 43 72 50 85 52" fill="#2E4F3B" opacity=".85"/>
+      <path d="M144 58 C151 44 163 39 174 43 C165 56 157 66 146 71" fill="#2E4F3B" opacity=".8"/>
+      <path d="M61 150 C51 161 39 165 28 162 C35 149 45 142 59 140" fill="#2E4F3B" opacity=".78"/>
+    </g>
+  </g>
 </svg>

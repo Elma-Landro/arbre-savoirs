@@ -1,36 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img">
-<defs>
-  <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
-    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5"/>
-  </filter>
-  <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#D99A2B"/>
-    <stop offset="0.55" stop-color="#B35435"/>
-    <stop offset="1" stop-color="#5C3A21"/>
-  </linearGradient>
-  <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#F4EFE6"/>
-    <stop offset="0.55" stop-color="#6B7280"/>
-    <stop offset="1" stop-color="#5C3A21"/>
-  </linearGradient>
-  <radialGradient id="ember" cx="50%" cy="50%" r="55%">
-    <stop offset="0" stop-color="#FF6B1A"/>
-    <stop offset="0.55" stop-color="#D99A2B"/>
-    <stop offset="1" stop-color="#B35435"/>
-  </radialGradient>
-  <radialGradient id="paper" cx="45%" cy="35%" r="75%">
-    <stop offset="0" stop-color="#F4EFE6"/>
-    <stop offset="1" stop-color="#D99A2B"/>
-  </radialGradient>
-</defs>
-<g filter="url(#grain)" stroke="#5C3A21" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Hache illustrée</title>
+  <defs>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.024" numOctaves="3" seed="89"/>
+      <feDisplacementMap in="SourceGraphic" scale="3"/>
+    </filter>
+    <filter id="softShadow">
+      <feDropShadow dx="2" dy="3" stdDeviation="3" flood-color="#5C3A21" flood-opacity="0.35"/>
+    </filter>
+    <linearGradient id="woodWarm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D99A2B"/>
+      <stop offset=".65" stop-color="#B35435"/>
+      <stop offset="1" stop-color="#5C3A21"/>
+    </linearGradient>
+    <linearGradient id="leafy" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2E4F3B"/>
+      <stop offset="1" stop-color="#D99A2B" stop-opacity=".3"/>
+    </linearGradient>
+    <linearGradient id="steelSoft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F4EFE6"/>
+      <stop offset=".5" stop-color="#6B7280"/>
+      <stop offset="1" stop-color="#5C3A21"/>
+    </linearGradient>
+  </defs>
 
-  <path d="M73 159 C91 126 110 92 132 54" stroke="#5C3A21" stroke-width="17" fill="none"/>
-  <path d="M75 156 C94 122 111 90 129 58" stroke="url(#wood)" stroke-width="10" fill="none"/>
-  <path d="M113 48 C143 30 169 42 174 65 C153 77 138 101 111 91 C101 77 101 58 113 48 Z" fill="url(#metal)"/>
-  <path d="M129 58 C142 54 157 57 168 65" fill="none" stroke="#F4EFE6" opacity="0.7"/>
-  <path d="M108 92 C121 80 128 67 132 54" fill="none"/>
-
-</g>
+  <g filter="url(#softShadow)">
+    <g filter="url(#grain)" stroke="#5C3A21" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M83 56 C92 51 101 54 107 62 C124 89 138 128 149 161 C152 169 149 176 142 179 C135 182 129 178 125 170 C113 140 97 99 78 71 C75 66 76 60 83 56 Z" fill="url(#woodWarm)"/>
+      <path d="M93 52 C118 42 147 47 163 63 C150 75 131 83 108 81 C101 70 96 60 93 52 Z" fill="url(#steelSoft)"/>
+      <path d="M104 60 C107 55 112 55 115 60 C132 74 154 68 170 57 C175 80 162 101 139 108 C126 102 116 94 104 60 Z" fill="#6B7280" opacity=".95"/>
+      <path d="M121 49 C134 47 147 51 158 59" fill="none" opacity=".6"/>
+      <path d="M127 90 C144 90 156 84 167 72" fill="none" opacity=".55"/>
+      <circle cx="93" cy="66" r="6" fill="#D99A2B" opacity=".95"/>
+    </g>
+  </g>
 </svg>

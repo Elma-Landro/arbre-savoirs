@@ -208,5 +208,11 @@
     "emoji": "🧺",
     "label": "Zone de préparation",
     "status": "draft"
+  },
+  "bg_foret_bucheron": {
+    "svg": "/assets/zones/bg_foret_bucheron.svg",
+    "emoji": "🌲",
+    "label": "Forêt douce",
+    "status": "pilot"
   }
 }
