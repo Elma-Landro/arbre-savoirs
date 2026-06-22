@@ -26,6 +26,8 @@ const BACKGROUNDS = {
 }
 const IMAGE_BACKGROUNDS = {
   foret_bucheron: '/assets/zones/bg_foret_bucheron.svg',
+  atelier_forgeron: '/assets/zones/bg_forge_enluminure.png',
+  atelier_fonderie: '/assets/zones/bg_forge_enluminure.png',
 }
 
 function Draggable({ id, emoji, asset, label, disabled, wrong }) {
@@ -175,7 +177,7 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
         className="relative p-6 min-h-[420px] flex flex-col"
         style={
           bgSrc
-            ? { backgroundImage: `url(${bgSrc})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+            ? { backgroundImage: `url(${bgSrc})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: '#1A3A8F' }
             : { background: bgCss }
         }
       >

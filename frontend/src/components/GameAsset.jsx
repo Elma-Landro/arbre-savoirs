@@ -1,6 +1,9 @@
-// GameAsset.jsx — rend un SVG de jeu si disponible, sinon conserve l'emoji.
-// Le fallback emoji est volontairement local au composant : un asset cassé ne
-// doit jamais bloquer l'expérience de jeu.
+// GameAsset.jsx — rend un asset de jeu (PNG enluminuré ou SVG) si disponible,
+// sinon conserve l'emoji. Le fallback emoji est volontairement local au
+// composant : un asset cassé ne doit jamais bloquer l'expérience de jeu.
+//
+// Rendu : on préfère `asset.src` (PNG enluminure), à défaut `asset.svg` (SVG
+// plus ancien), à défaut l'emoji. Préservation stricte du fallback emoji.
 
 import { useState } from 'react'
 import assetManifest from '../assets/assets_manifest.json'
@@ -13,7 +16,7 @@ const SIZE_CLASS = {
 }
 
 // Tailles de texte alignées sur SIZE_CLASS pour que le fallback emoji garde
-// un rendu visuellement cohérent avec le SVG (pas de saut de taille).
+// un rendu visuellement cohérent (pas de saut de taille).
 const TEXT_SIZE_CLASS = {
   sm: 'text-3xl',
   md: 'text-4xl',
@@ -27,8 +30,10 @@ export default function GameAsset({ assetId, emoji, label, size = 'lg' }) {
   const text = label || asset?.label || assetId || 'élément'
   const dimensions = SIZE_CLASS[size] || SIZE_CLASS.lg
   const textSize = TEXT_SIZE_CLASS[size] || TEXT_SIZE_CLASS.lg
+  // Priorité : PNG enluminuré (src) > SVG (svg) > emoji.
+  const src = asset?.src || asset?.svg
 
-  if (!asset?.svg || failed) {
+  if (!src || failed) {
     return (
       <span
         data-testid={`asset-emoji-${assetId || 'fallback'}`}
@@ -45,7 +50,7 @@ export default function GameAsset({ assetId, emoji, label, size = 'lg' }) {
   return (
     <img
       data-testid={`asset-img-${assetId}`}
-      src={asset.svg}
+      src={src}
       alt={text}
       title={text}
       onError={() => setFailed(true)}

@@ -62,24 +62,26 @@ function readGraph() {
   return yaml.load(fs.readFileSync(GRAPH_PATH, 'utf8'))
 }
 
-// --- A1 : manifest complet + fichiers SVG présents -------------------------
+// --- A1 : manifest complet + fichiers présents (src PNG ou svg) -------------
 const manifest = readManifest()
 record('A1.1', !!manifest, manifest ? 'assets_manifest.json présent.' : 'Manifest absent.')
 if (manifest) {
   const missing = EXPECTED_ASSETS.filter((id) => !manifest[id])
   const missingFields = EXPECTED_ASSETS.filter((id) => {
     const a = manifest[id]
-    return !a || !a.svg || !a.emoji || !a.label || !a.status
+    // src (PNG enluminuré) OU svg (fallback) suffit ; emoji/label/status requis.
+    return !a || !(a.src || a.svg) || !a.emoji || !a.label || !a.status
   })
   const missingFiles = EXPECTED_ASSETS.filter((id) => {
     const a = manifest[id]
-    if (!a?.svg) return true
-    const filePath = path.join(process.cwd(), 'public', a.svg.replace(/^\//, ''))
+    const rel = a?.src || a?.svg
+    if (!rel) return true
+    const filePath = path.join(process.cwd(), 'public', rel.replace(/^\//, ''))
     return !fs.existsSync(filePath)
   })
   record('A1.2', missing.length === 0, missing.length ? `Assets manquants: ${missing.join(', ')}` : `${EXPECTED_ASSETS.length} assets déclarés.`)
-  record('A1.3', missingFields.length === 0, missingFields.length ? `Champs incomplets: ${missingFields.join(', ')}` : 'Champs id/svg/emoji/label/status OK.')
-  record('A1.4', missingFiles.length === 0, missingFiles.length ? `SVG absents: ${missingFiles.join(', ')}` : 'Tous les SVG existent.')
+  record('A1.3', missingFields.length === 0, missingFields.length ? `Champs incomplets: ${missingFields.join(', ')}` : 'Champs src|svg/emoji/label/status OK.')
+  record('A1.4', missingFiles.length === 0, missingFiles.length ? `Fichiers absents: ${missingFiles.join(', ')}` : 'Tous les fichiers assets existent (PNG ou SVG).')
 }
 
 // --- A2 : graphe enrichi sans suppression emoji -----------------------------
@@ -96,11 +98,25 @@ const unknownAssets = assetElements
   .filter((assetId) => assetId && !manifest?.[assetId])
 record('A2.3', unknownAssets.length === 0, unknownAssets.length ? `Assets inconnus dans le graphe: ${unknownAssets.join(', ')}` : 'Tous les asset IDs du graphe existent dans le manifest.')
 
-// --- A3 : palette SVG stricte -----------------------------------------------
+// --- A3 : palette SVG stricte (uniquement les .svg ; les PNG enluminurés
+//         sont des pixels, non vérifiables par regex texte) -------------------
+// Palette canonique enluminure (cf. brief migration) :
+//   Vermillon #C0392B | Outremer #1A3A8F | Or chaud #D4A017 | Malachite #2D7A4F
+//   Terre d'ombre #6B3A2A | Ivoire #F5EDD6 | Noir d'encre #1A1A1A | Gris acier #5A6472
+//
+// NB : la palette stricte n'est exigée QUE sur les assets forge/fonte déjà
+// migrés (périmètre de cette session). Les assets bûcheron/charrette/avatar
+// conservent l'ancienne palette SVG "pilot" et seront migrés dans une session
+// ultérieure — on ne les fait pas échouer ici.
 if (manifest) {
-  const allowed = new Set(['#D99A2B', '#B35435', '#2E4F3B', '#F4EFE6', '#5C3A21', '#FF6B1A', '#6B7280'])
+  const ENLUMINURE_ASSETS = [
+    'prop_minerai_fer', 'prop_charbon', 'prop_lingot_acier', 'prop_metal_liquide',
+    'prop_marteau', 'zone_four_fonderie', 'zone_moule_lingot', 'zone_feu_forge',
+    'zone_enclume', 'result_outil_acier', 'icon_forgeron', 'icon_fondeur',
+  ]
+  const allowed = new Set(['#C0392B', '#1A3A8F', '#D4A017', '#2D7A4F', '#6B3A2A', '#F5EDD6', '#1A1A1A', '#5A6472'])
   const violations = []
-  for (const id of EXPECTED_ASSETS) {
+  for (const id of ENLUMINURE_ASSETS) {
     const svgRel = manifest[id]?.svg
     if (!svgRel) continue
     const filePath = path.join(process.cwd(), 'public', svgRel.replace(/^\//, ''))
@@ -111,7 +127,33 @@ if (manifest) {
       if (!allowed.has(color)) violations.push(`${id}:${match[0]}`)
     }
   }
-  record('A3.1', violations.length === 0, violations.length ? `Couleurs hors palette: ${violations.join(', ')}` : 'Palette stricte respectée.')
+  record('A3.1', violations.length === 0, violations.length ? `Couleurs hors palette (SVG forge/fonte): ${violations.slice(0,5).join(', ')}${violations.length>5?'…':''}` : 'Palette enluminure stricte respectée sur les 12 SVG forge/fonte.')
+
+  // A3.2 — les 12 assets forge/fonte migrés sont déclarés enluminure_validated.
+  const ENLUMINURE_EXPECTED = [
+    'prop_minerai_fer', 'prop_charbon', 'prop_lingot_acier', 'prop_metal_liquide',
+    'prop_marteau', 'zone_four_fonderie', 'zone_moule_lingot', 'zone_feu_forge',
+    'zone_enclume', 'result_outil_acier', 'icon_forgeron', 'icon_fondeur',
+  ]
+  const notValidated = ENLUMINURE_EXPECTED.filter((id) => manifest[id]?.status !== 'enluminure_validated')
+  record('A3.2', notValidated.length === 0,
+    notValidated.length ? `Non validés: ${notValidated.join(', ')}` : '12 assets forge/fonte au statut enluminure_validated.')
+
+  // A3.3 — chaque asset enluminure_validated pointe vers un PNG existant.
+  const missingPng = ENLUMINURE_EXPECTED.filter((id) => {
+    const src = manifest[id]?.src
+    if (!src) return true
+    const filePath = path.join(process.cwd(), 'public', src.replace(/^\//, ''))
+    return !fs.existsSync(filePath)
+  })
+  record('A3.3', missingPng.length === 0,
+    missingPng.length ? `PNG manquants: ${missingPng.join(', ')}` : '12 PNG enluminure présents.')
+
+  // A3.4 — le fond forge enluminé est déclaré et pointe vers un PNG existant.
+  const bg = manifest['bg_forge_enluminure']
+  const bgOk = bg?.status === 'enluminure_validated' && bg?.src
+    && fs.existsSync(path.join(process.cwd(), 'public', bg.src.replace(/^\//, '')))
+  record('A3.4', bgOk, bgOk ? 'bg_forge_enluminure présent et validé.' : 'bg_forge_enluminure manquant ou non validé.')
 }
 
 // --- A4 : rendu navigateur SVG + fallback emoji -----------------------------

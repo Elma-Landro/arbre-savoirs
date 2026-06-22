@@ -3,73 +3,85 @@
     "svg": "/assets/props/prop_minerai_fer.svg",
     "emoji": "🪨",
     "label": "Minerai de fer",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/props/prop_minerai_fer.png"
   },
   "prop_charbon": {
     "svg": "/assets/props/prop_charbon.svg",
     "emoji": "⚫",
     "label": "Charbon",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/props/prop_charbon.png"
   },
   "prop_metal_liquide": {
     "svg": "/assets/props/prop_metal_liquide.svg",
     "emoji": "🧪",
     "label": "Métal liquide",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/props/prop_metal_liquide.png"
   },
   "zone_four_fonderie": {
     "svg": "/assets/zones/zone_four_fonderie.svg",
     "emoji": "🔥",
     "label": "Four de fonderie",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/zones/zone_four_fonderie.png"
   },
   "zone_moule_lingot": {
     "svg": "/assets/zones/zone_moule_lingot.svg",
     "emoji": "🧱",
     "label": "Moule à lingot",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/zones/zone_moule_lingot.png"
   },
   "prop_lingot_acier": {
     "svg": "/assets/props/prop_lingot_acier.svg",
     "emoji": "🧱",
     "label": "Lingot d'acier",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/props/prop_lingot_acier.png"
   },
   "zone_feu_forge": {
     "svg": "/assets/zones/zone_feu_forge.svg",
     "emoji": "🔥",
     "label": "Feu de forge",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/zones/zone_feu_forge.png"
   },
   "zone_enclume": {
     "svg": "/assets/zones/zone_enclume.svg",
     "emoji": "⚙️",
     "label": "Enclume",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/zones/zone_enclume.png"
   },
   "prop_marteau": {
     "svg": "/assets/props/prop_marteau.svg",
     "emoji": "🔨",
     "label": "Marteau",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/props/prop_marteau.png"
   },
   "result_outil_acier": {
     "svg": "/assets/results/result_outil_acier.svg",
     "emoji": "⚔️",
     "label": "Outil en acier",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/results/result_outil_acier.png"
   },
   "icon_fondeur": {
     "svg": "/assets/icons/icon_fondeur.svg",
     "emoji": "🔥",
     "label": "Icône fondeur",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/icons/icon_fondeur.png"
   },
   "icon_forgeron": {
     "svg": "/assets/icons/icon_forgeron.svg",
     "emoji": "⚒️",
     "label": "Icône forgeron",
-    "status": "draft"
+    "status": "enluminure_validated",
+    "src": "/assets/icons/icon_forgeron.png"
   },
   "prop_tronc": {
     "svg": "/assets/props/prop_tronc.svg",
@@ -214,5 +226,12 @@
     "emoji": "🌲",
     "label": "Forêt douce",
     "status": "pilot"
+  },
+  "bg_forge_enluminure": {
+    "src": "/assets/zones/bg_forge_enluminure.png",
+    "svg": "/assets/zones/bg_forge_enluminure.svg",
+    "emoji": "🔥",
+    "label": "Forge enluminée",
+    "status": "enluminure_validated"
   }
 }
