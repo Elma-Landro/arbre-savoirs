@@ -12,17 +12,27 @@ const SIZE_CLASS = {
   xl: 'w-20 h-20',
 }
 
+// Tailles de texte alignées sur SIZE_CLASS pour que le fallback emoji garde
+// un rendu visuellement cohérent avec le SVG (pas de saut de taille).
+const TEXT_SIZE_CLASS = {
+  sm: 'text-3xl',
+  md: 'text-4xl',
+  lg: 'text-5xl',
+  xl: 'text-6xl',
+}
+
 export default function GameAsset({ assetId, emoji, label, size = 'lg' }) {
   const [failed, setFailed] = useState(false)
   const asset = assetId ? assetManifest[assetId] : null
   const text = label || asset?.label || assetId || 'élément'
   const dimensions = SIZE_CLASS[size] || SIZE_CLASS.lg
+  const textSize = TEXT_SIZE_CLASS[size] || TEXT_SIZE_CLASS.lg
 
   if (!asset?.svg || failed) {
     return (
       <span
         data-testid={`asset-emoji-${assetId || 'fallback'}`}
-        className="text-5xl leading-none"
+        className={`${textSize} leading-none`}
         role="img"
         aria-label={text}
         title={text}

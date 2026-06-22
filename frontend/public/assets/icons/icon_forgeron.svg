@@ -1,1 +1,43 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Icône forgeron</title><defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="18"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4EFE6"/><stop offset=".45" stop-color="#6B7280"/><stop offset="1" stop-color="#5C3A21"/></linearGradient></defs><g filter="url(#grain)" stroke="#5C3A21" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M48 104 C76 96 125 96 154 104 C140 118 126 124 110 123 L106 142 L127 158 L72 158 L91 142 L88 123 C71 123 57 117 48 104 Z" fill="url(#metal)"/><path d="M57 52 C79 43 106 43 128 52 L124 74 C103 68 83 68 62 74 Z" fill="url(#metal)"/><path d="M91 71 L128 141" fill="none" stroke="#5C3A21" stroke-width="8"/><path d="M60 108 C89 115 124 115 149 108" fill="none" stroke="#F4EFE6" opacity=".7"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Icône forgeron enluminée</title>
+  <defs>
+    <filter id="grain" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="3" seed="52"/>
+      <feDisplacementMap in="SourceGraphic" scale="1.8"/>
+    </filter>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="2" dy="4" stdDeviation="2.5" flood-color="#6B3A2A" flood-opacity="0.38"/>
+    </filter>
+    <radialGradient id="fireGlow" cx="50%" cy="55%" r="55%">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.52" stop-color="#C0392B"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </radialGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F5EDD6"/>
+      <stop offset="0.45" stop-color="#5A6472"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.35" stop-color="#6B3A2A"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="goldRed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.65" stop-color="#C0392B"/>
+      <stop offset="1" stop-color="#6B3A2A"/>
+    </linearGradient>
+  </defs>
+
+
+  <g filter="url(#shadow)" stroke="#1A1A1A" stroke-width="3.2" stroke-linejoin="round">
+    <circle cx="100" cy="100" r="78" fill="#1A3A8F"/>
+    <circle cx="100" cy="100" r="67" fill="none" stroke="#D4A017" stroke-width="8"/>
+    <path d="M40 49 C53 37 68 39 80 48 M119 49 C135 37 151 39 163 51 M45 151 C62 164 77 162 90 151 M112 151 C130 165 149 162 162 148" fill="none" stroke="#2D7A4F" stroke-width="5"/>
+    <path d="M58 118 C83 112 121 112 146 118 L137 139 L68 139 Z" fill="url(#steel)"/>
+    <path d="M78 70 L122 132" stroke="#6B3A2A" stroke-width="10" stroke-linecap="round"/>
+    <path d="M62 55 L102 41 L116 62 L76 78 Z" fill="url(#steel)"/>
+    <path d="M58 85 C78 78 120 79 144 88" fill="none" stroke="#D4A017" stroke-width="5"/>
+    <path d="M96 24 L104 39 L121 41 L108 52 L112 68 L99 59 L84 67 L90 51 L78 40 L94 38 Z" fill="#D4A017"/>
+  </g>
+</svg>

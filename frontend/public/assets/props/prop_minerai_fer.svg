@@ -1,1 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Minerai de fer</title><defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4EFE6"/><stop offset=".45" stop-color="#6B7280"/><stop offset="1" stop-color="#5C3A21"/></linearGradient></defs><g filter="url(#grain)" stroke="#5C3A21" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M44 126 C31 108 43 79 67 67 C84 50 122 45 146 66 C168 84 174 119 153 139 C129 162 69 158 44 126 Z" fill="url(#metal)"/><path d="M66 101 C88 91 105 103 126 91" fill="none" stroke="#B35435" stroke-width="3"/><path d="M77 126 C94 113 119 124 138 112" fill="none" stroke="#FF6B1A" stroke-width="2" opacity=".8"/><circle cx="83" cy="78" r="8" fill="#6B7280" opacity=".7"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Minerai de fer enluminé</title>
+  <defs>
+    <filter id="grain" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="3" seed="52"/>
+      <feDisplacementMap in="SourceGraphic" scale="1.8"/>
+    </filter>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="2" dy="4" stdDeviation="2.5" flood-color="#6B3A2A" flood-opacity="0.38"/>
+    </filter>
+    <radialGradient id="fireGlow" cx="50%" cy="55%" r="55%">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.52" stop-color="#C0392B"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </radialGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F5EDD6"/>
+      <stop offset="0.45" stop-color="#5A6472"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.35" stop-color="#6B3A2A"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="goldRed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.65" stop-color="#C0392B"/>
+      <stop offset="1" stop-color="#6B3A2A"/>
+    </linearGradient>
+  </defs>
+
+
+  <g filter="url(#shadow)" stroke="#1A1A1A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+    <path filter="url(#grain)" d="M44 118 C33 91 53 58 83 48 C114 37 149 49 164 78 C177 103 160 137 132 152 C99 170 57 150 44 118 Z" fill="#5A6472"/>
+    <path d="M62 88 C84 78 104 83 123 65 M76 133 C97 112 122 116 145 98 M58 115 L91 103 L111 137" fill="none" stroke="#C0392B" stroke-width="5" opacity="0.9"/>
+    <path d="M70 63 C92 54 120 57 145 78" fill="none" stroke="#F5EDD6" stroke-width="2" opacity="0.55"/>
+    <circle cx="134" cy="74" r="5" fill="#D4A017"/>
+  </g>
+</svg>

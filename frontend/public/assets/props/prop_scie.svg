@@ -1,1 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Scie à main</title><defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="24"/><feDisplacementMap in="SourceGraphic" scale="1.2"/></filter><linearGradient id="metal" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F4EFE6"/><stop offset=".55" stop-color="#6B7280"/><stop offset="1" stop-color="#5C3A21"/></linearGradient><linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D99A2B"/><stop offset=".6" stop-color="#B35435"/><stop offset="1" stop-color="#5C3A21"/></linearGradient></defs><g filter="url(#grain)" stroke="#5C3A21" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M54 83 L158 64 L146 101 L133 93 L122 107 L111 98 L100 112 L88 103 L77 117 L66 108 Z" fill="url(#metal)"/><path d="M38 89 C34 68 59 59 70 76 C79 91 63 108 47 104 C43 101 40 96 38 89 Z" fill="url(#wood)"/><path d="M72 82 L148 69" fill="none" stroke="#F4EFE6" opacity=".8"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Scie illustrée</title>
+  <defs>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.024" numOctaves="3" seed="89"/>
+      <feDisplacementMap in="SourceGraphic" scale="3"/>
+    </filter>
+    <filter id="softShadow">
+      <feDropShadow dx="2" dy="3" stdDeviation="3" flood-color="#5C3A21" flood-opacity="0.35"/>
+    </filter>
+    <linearGradient id="woodWarm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D99A2B"/>
+      <stop offset=".65" stop-color="#B35435"/>
+      <stop offset="1" stop-color="#5C3A21"/>
+    </linearGradient>
+    <linearGradient id="leafy" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2E4F3B"/>
+      <stop offset="1" stop-color="#D99A2B" stop-opacity=".3"/>
+    </linearGradient>
+    <linearGradient id="steelSoft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F4EFE6"/>
+      <stop offset=".5" stop-color="#6B7280"/>
+      <stop offset="1" stop-color="#5C3A21"/>
+    </linearGradient>
+  </defs>
+
+  <g filter="url(#softShadow)">
+    <g filter="url(#grain)" stroke="#5C3A21" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M43 118 C75 91 111 72 157 50 C165 47 173 53 177 61 C148 82 111 105 72 133 C56 143 36 132 43 118 Z" fill="url(#steelSoft)"/>
+      <path d="M42 116 C31 104 29 87 42 75 C54 66 70 71 79 84 C88 99 83 118 69 129 C59 135 49 127 42 116 Z" fill="url(#woodWarm)"/>
+      <path d="M44 112 C37 103 40 92 49 88 C59 84 68 92 69 102 C70 112 61 120 51 116 C46 114 44 113 44 112 Z" fill="#F4EFE6" opacity=".8"/>
+      <path d="M55 125 L66 144 L76 124 L87 140 L96 118 L109 133 L118 111 L130 124 L139 104 L151 113" fill="#F4EFE6" opacity=".8"/>
+      <path d="M59 118 C93 101 128 84 161 72" fill="none" opacity=".55"/>
+    </g>
+  </g>
+</svg>

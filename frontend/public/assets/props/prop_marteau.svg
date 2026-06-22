@@ -1,1 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Marteau</title><defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="15"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4EFE6"/><stop offset=".45" stop-color="#6B7280"/><stop offset="1" stop-color="#5C3A21"/></linearGradient><linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D99A2B"/><stop offset=".58" stop-color="#B35435"/><stop offset="1" stop-color="#5C3A21"/></linearGradient></defs><g filter="url(#grain)" stroke="#5C3A21" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M60 59 C82 48 113 48 134 59 L129 83 C106 76 84 76 65 83 Z" fill="url(#metal)"/><path d="M96 78 C108 100 122 127 139 159 C132 166 122 168 115 160 C102 127 90 103 78 83 Z" fill="url(#wood)"/><path d="M68 62 C91 70 113 69 129 61" fill="none" stroke="#F4EFE6" opacity=".65"/><path d="M113 138 C122 136 128 132 134 126" fill="none" stroke="#5C3A21" opacity=".7"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Marteau enluminé</title>
+  <defs>
+    <filter id="grain" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="3" seed="52"/>
+      <feDisplacementMap in="SourceGraphic" scale="1.8"/>
+    </filter>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="2" dy="4" stdDeviation="2.5" flood-color="#6B3A2A" flood-opacity="0.38"/>
+    </filter>
+    <radialGradient id="fireGlow" cx="50%" cy="55%" r="55%">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.52" stop-color="#C0392B"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </radialGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F5EDD6"/>
+      <stop offset="0.45" stop-color="#5A6472"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.35" stop-color="#6B3A2A"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="goldRed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.65" stop-color="#C0392B"/>
+      <stop offset="1" stop-color="#6B3A2A"/>
+    </linearGradient>
+  </defs>
+
+
+  <g filter="url(#shadow)" stroke="#1A1A1A" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path filter="url(#grain)" d="M67 76 C75 67 86 69 92 79 L144 151 C150 160 147 170 139 174 C130 179 121 174 116 165 L64 92 C60 86 61 80 67 76 Z" fill="url(#wood)"/>
+    <path d="M45 50 L106 28 C119 32 129 44 132 58 L70 83 C58 79 49 68 45 50 Z" fill="url(#steel)"/>
+    <path d="M73 41 C88 47 98 59 104 73" fill="none" stroke="#D4A017" stroke-width="3"/>
+    <path d="M84 91 L129 157" fill="none" stroke="#D4A017" stroke-width="2" opacity="0.7"/>
+  </g>
+</svg>

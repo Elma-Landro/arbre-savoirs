@@ -14,6 +14,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { DndContext, useDraggable, useDroppable, PointerSensor, useSensor } from '@dnd-kit/core'
 import GameAsset from './GameAsset'
+import AvatarPreview from './AvatarPreview'
 
 // Dégradés CSS associés aux clés de `background` (Règle 3 : pas de beaux assets).
 const BACKGROUNDS = {
@@ -22,6 +23,9 @@ const BACKGROUNDS = {
   foret: 'linear-gradient(180deg,#14532d 0%,#16a34a 60%,#86efac 100%)',
   atelier_charron: 'linear-gradient(180deg,#78350f 0%,#a16207 50%,#fde68a 100%)',
   celebration: 'linear-gradient(180deg,#1e3a8a 0%,#7c3aed 50%,#f472b6 100%)',
+}
+const IMAGE_BACKGROUNDS = {
+  foret_bucheron: '/assets/zones/bg_foret_bucheron.svg',
 }
 
 function Draggable({ id, emoji, asset, label, disabled, wrong }) {
@@ -107,7 +111,7 @@ function StaticElt({ id, emoji, asset, label }) {
   )
 }
 
-export default function Scene({ scenario, childName, onComplete, onInstruction, onSuccess }) {
+export default function Scene({ scenario, childName, avatarConfig, onComplete, onInstruction, onSuccess }) {
   const [stepIdx, setStepIdx] = useState(0)
   const [wrongId, setWrongId] = useState(null) // id d'élément en secousse (T2.4)
   const [done, setDone] = useState(false)
@@ -121,10 +125,8 @@ export default function Scene({ scenario, childName, onComplete, onInstruction, 
   const expectedSource = step?.action_attendue?.source
   const expectedTarget = step?.action_attendue?.target
 
-  const bg = useMemo(
-    () => BACKGROUNDS[scenario.background] || BACKGROUNDS.foret,
-    [scenario.background],
-  )
+  const bgSrc = IMAGE_BACKGROUNDS[scenario.background]
+  const bgCss = BACKGROUNDS[scenario.background] || BACKGROUNDS.foret
 
   // T3.2 — à chaque étape (y compris la 1re au montage), on annonce l'instruction.
   useEffect(() => {
@@ -169,14 +171,28 @@ export default function Scene({ scenario, childName, onComplete, onInstruction, 
   return (
     <div data-testid="scene" className="rounded-3xl overflow-hidden shadow-xl border-4 border-white/50">
       {/* Décor (T2.1) */}
-      <div className="relative p-6 min-h-[420px] flex flex-col" style={{ background: bg }}>
+      <div
+        className="relative p-6 min-h-[420px] flex flex-col"
+        style={
+          bgSrc
+            ? { backgroundImage: `url(${bgSrc})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+            : { background: bgCss }
+        }
+      >
         <div className="flex items-center justify-between mb-4">
+          {/* Avatar de l'enfant — coin supérieur gauche, avec fallback emoji */}
+          <div
+            className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-amber-300 bg-white/75 shadow-lg"
+            title={childName}
+          >
+            {avatarConfig ? (
+              <AvatarPreview config={avatarConfig} size={56} />
+            ) : (
+              <span className="text-5xl drop-shadow">{scenario.avatar || '👧'}</span>
+            )}
+          </div>
           <span className="rounded-full bg-black/30 text-white px-3 py-1 text-sm font-bold">
             Étape {stepIdx + 1} / {total}
-          </span>
-          {/* Avatar de l'enfant */}
-          <span className="text-5xl drop-shadow" title={childName}>
-            {scenario.avatar || '👧'}
           </span>
         </div>
 

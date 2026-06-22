@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" role="img"><title>Forge enluminée</title>
+  <defs>
+    <filter id="parchment"><feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="91"/><feDisplacementMap in="SourceGraphic" scale="2"/></filter>
+    <radialGradient id="forgeFire" cx="38%" cy="50%" r="40%"><stop offset="0" stop-color="#D4A017"/><stop offset="0.55" stop-color="#C0392B"/><stop offset="1" stop-color="#1A1A1A"/></radialGradient>
+  </defs>
+  <rect width="1200" height="700" fill="#1A3A8F"/>
+  <g opacity="0.8" fill="#D4A017">
+    <path d="M168 91 l8 17 19 2-14 12 4 18-17-9-16 9 4-18-14-12 19-2z"/><path d="M792 74 l6 12 14 1-10 9 3 14-13-7-12 7 3-14-10-9 14-1z"/><path d="M1004 165 l7 15 16 2-12 10 4 16-15-8-14 8 4-16-12-10 16-2z"/><circle cx="657" cy="151" r="6"/><circle cx="1090" cy="285" r="5"/><circle cx="506" cy="86" r="4"/>
+  </g>
+  <rect x="22" y="22" width="1156" height="656" fill="none" stroke="#D4A017" stroke-width="28"/>
+  <rect x="42" y="42" width="1116" height="616" fill="none" stroke="#C0392B" stroke-width="12"/>
+  <g filter="url(#parchment)" stroke="#1A1A1A" stroke-width="8" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M70 60 C130 120 130 190 72 250 M1128 70 C1070 130 1076 205 1130 260 M78 620 C143 571 212 572 270 627 M930 628 C995 575 1068 575 1130 620" fill="none" stroke="#2D7A4F" stroke-width="10"/>
+    <path d="M180 545 L180 255 C188 165 263 119 351 124 C445 129 516 190 522 279 L522 545 Z" fill="#5A6472"/>
+    <path d="M235 545 L235 326 C242 264 285 232 351 235 C414 238 462 282 464 342 L464 545 Z" fill="#1A1A1A"/>
+    <path d="M260 545 C235 445 282 360 350 306 C445 381 470 459 438 545 Z" fill="url(#forgeFire)"/>
+    <path d="M312 545 C294 473 323 412 365 369 C411 443 407 492 388 545 Z" fill="#D4A017"/>
+    <path d="M205 230 L500 230 M188 330 L240 330 M462 332 L515 332 M190 438 L236 438 M463 438 L518 438" fill="none" opacity="0.55"/>
+    <path d="M720 460 C785 443 895 444 966 459 C943 505 768 508 720 460 Z" fill="#5A6472"/>
+    <path d="M806 501 L900 501 L926 572 L768 572 Z" fill="#5A6472"/>
+    <path d="M660 610 L1140 610 L1140 675 L55 675 L55 610 Z" fill="#6B3A2A" stroke="none"/>
+    <path d="M610 382 L1142 382 L1142 608 L610 608 Z" fill="#6B3A2A"/>
+    <path d="M635 420 C720 398 800 405 872 420 M640 485 C765 462 935 468 1120 494 M660 552 C810 530 957 539 1118 560" fill="none" stroke="#D4A017" stroke-width="5" opacity="0.55"/>
+    <circle cx="825" cy="488" r="28" fill="#D4A017"/><path d="M810 488 L825 466 L841 488 L825 510 Z" fill="#C0392B"/>
+    <path d="M102 100 L133 137 L98 174 L67 137 Z" fill="#C0392B"/><path d="M92 136 L101 118 L110 136 L101 154 Z" fill="#D4A017"/>
+    <path d="M98 610 C115 595 135 598 144 618 C130 632 110 631 98 610 Z" fill="#6B3A2A"/><circle cx="124" cy="609" r="3" fill="#1A1A1A"/>
+    <path d="M1074 618 C1088 601 1111 602 1124 619 C1109 634 1089 635 1074 618 Z" fill="#2D7A4F"/><path d="M1118 616 L1140 604"/>
+  </g>
+</svg>

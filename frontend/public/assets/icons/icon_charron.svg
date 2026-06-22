@@ -1,1 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Icône charron</title><defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="32"/><feDisplacementMap in="SourceGraphic" scale="1.2"/></filter><linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D99A2B"/><stop offset=".6" stop-color="#B35435"/><stop offset="1" stop-color="#5C3A21"/></linearGradient></defs><g filter="url(#grain)" stroke="#5C3A21" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="80" cy="105" r="42" fill="url(#wood)"/><circle cx="80" cy="105" r="20" fill="#F4EFE6" opacity=".55"/><path d="M80 63 L80 147 M38 105 L122 105 M50 75 L110 135 M110 75 L50 135" fill="none"/><path d="M111 119 C132 111 150 113 164 124 L157 143 C139 136 124 136 107 143 Z" fill="url(#wood)"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img">
+<defs>
+  <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5"/>
+  </filter>
+  <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#D99A2B"/>
+    <stop offset="0.55" stop-color="#B35435"/>
+    <stop offset="1" stop-color="#5C3A21"/>
+  </linearGradient>
+  <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F4EFE6"/>
+    <stop offset="0.55" stop-color="#6B7280"/>
+    <stop offset="1" stop-color="#5C3A21"/>
+  </linearGradient>
+  <radialGradient id="ember" cx="50%" cy="50%" r="55%">
+    <stop offset="0" stop-color="#FF6B1A"/>
+    <stop offset="0.55" stop-color="#D99A2B"/>
+    <stop offset="1" stop-color="#B35435"/>
+  </radialGradient>
+  <radialGradient id="paper" cx="45%" cy="35%" r="75%">
+    <stop offset="0" stop-color="#F4EFE6"/>
+    <stop offset="1" stop-color="#D99A2B"/>
+  </radialGradient>
+</defs>
+<g filter="url(#grain)" stroke="#5C3A21" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+  <circle cx="100" cy="99" r="67" fill="#F4EFE6"/>
+  <circle cx="75" cy="127" r="20" fill="#D99A2B"/>
+  <circle cx="133" cy="127" r="20" fill="#D99A2B"/>
+  <path d="M48 80 C80 62 124 62 154 81 L142 113 C109 130 71 124 50 109 Z" fill="url(#wood)"/>
+  <path d="M60 91 L145 91 M56 108 L144 108" fill="none"/>
+  <path d="M164 83 C177 85 184 94 181 106" fill="none"/>
+
+</g>
+</svg>
