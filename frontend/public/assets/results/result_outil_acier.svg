@@ -1,1 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Outil en acier</title><defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="16"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4EFE6"/><stop offset=".45" stop-color="#6B7280"/><stop offset="1" stop-color="#5C3A21"/></linearGradient><linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D99A2B"/><stop offset=".58" stop-color="#B35435"/><stop offset="1" stop-color="#5C3A21"/></linearGradient></defs><g filter="url(#grain)" stroke="#5C3A21" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M101 22 C116 68 121 111 113 159 C107 171 93 171 87 159 C82 111 87 68 101 22 Z" fill="url(#metal)"/><path d="M65 94 C88 85 115 85 138 94 L134 112 C112 105 90 105 68 112 Z" fill="url(#wood)"/><path d="M94 33 C101 70 103 112 99 157" fill="none" stroke="#F4EFE6" opacity=".7"/><circle cx="101" cy="166" r="9" fill="#D99A2B"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img"><title>Épée forgée enluminée</title>
+  <defs>
+    <filter id="grain" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="3" seed="52"/>
+      <feDisplacementMap in="SourceGraphic" scale="1.8"/>
+    </filter>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="2" dy="4" stdDeviation="2.5" flood-color="#6B3A2A" flood-opacity="0.38"/>
+    </filter>
+    <radialGradient id="fireGlow" cx="50%" cy="55%" r="55%">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.52" stop-color="#C0392B"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </radialGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F5EDD6"/>
+      <stop offset="0.45" stop-color="#5A6472"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.35" stop-color="#6B3A2A"/>
+      <stop offset="1" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="goldRed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#D4A017"/>
+      <stop offset="0.65" stop-color="#C0392B"/>
+      <stop offset="1" stop-color="#6B3A2A"/>
+    </linearGradient>
+  </defs>
+
+
+  <g filter="url(#shadow)" stroke="#1A1A1A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path filter="url(#grain)" d="M104 21 C113 58 111 99 105 136 C101 143 94 143 91 136 C86 97 88 57 96 21 C99 14 102 14 104 21 Z" fill="url(#steel)"/>
+    <path d="M101 28 C103 68 101 101 98 134" fill="none" stroke="#F5EDD6" stroke-width="2" opacity="0.7"/>
+    <path d="M62 132 C81 123 117 123 136 132 L131 145 C112 140 85 140 67 145 Z" fill="#D4A017"/>
+    <path d="M92 142 L108 142 L111 174 C104 181 96 181 89 174 Z" fill="#6B3A2A"/>
+    <circle cx="100" cy="146" r="7" fill="#C0392B"/>
+    <path d="M84 178 C94 185 108 185 118 178" fill="none" stroke="#D4A017" stroke-width="4"/>
+  </g>
+</svg>
