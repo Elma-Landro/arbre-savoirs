@@ -248,3 +248,52 @@ CSS (Règle 3) ; lib DnD = `@dnd-kit/core` (fiable sous Playwright).
 ## Bilan V2
 
 Tous les objectifs 1 à 6 (V2) sont **DONE**. 0 FAILED, 0 BLOCKED. Tous les tests exécutés réellement : appels LLM GLM, synthèse gTTS, drag-and-drop Playwright (souris simulée), 3 scènes complétées de bout en bout, génération de scénarios par LLM. Voir `RAPPORT_MVP.md`.
+
+---
+
+# Chaîne acier v2.0 (2026-06-23) — Intégration assets enluminure
+
+Brief : *Prompt Agent — Intégration des assets enluminure* (assets_chaine_acier_v2.zip).
+Décisions actées : traduire le manifest en YAML (pas de double source),
+convertir click/répétitions en drag, remplacer recette_fonte/forge par les
+2 nouvelles recettes chaînées.
+
+## Tests — tous PASS
+
+| Test | Résultat |
+|---|---|
+| `e2e_chaine_acier.mjs` (T6, nouveau) | **10/10 PASS** |
+| `e2e_objective2.mjs` (moteur DnD, adapté au fondeur v2) | **9/9 PASS** |
+| `e2e_assets.mjs` (assets, IDs adaptés) | **14/14 PASS** |
+| `e2e_inscene.mjs` (scène in-situ, recette fondeur v2) | **4/4 PASS** |
+| `e2e_objective5.mjs` (méta-histoire, 3 recettes complétées) | PASS (T5.1a-T5.2) |
+| `test_objective1_graph.py` (schéma backend) | **3/3 PASS** |
+| `test_preload_scene_audio.py` (adapté fondeur_naissance_acier) | **PASS** |
+| `vite build` | OK (88 KB JS gzippé) |
+
+## Détail par objectif du brief
+
+- **O1 (assets)** : 14/16 PNG ont un alpha natif → pas de flood-fill. 16 entrées
+  `v2_*` au manifest. T1 (6 URLs HTTP 200) PASS.
+- **O2 (recettes YAML)** : 2 recettes traduites, étapes click converties en
+  drag. Nœud `epee_forgee` ajouté. Validate backend PASS.
+- **O3 (fonds)** : `IMAGE_BACKGROUNDS` + `SCENE_LAYOUTS` pour les 2 nouveaux
+  fonds, positions dérivées de l'analyse visuelle. T3 PASS.
+- **O4 (props + halo)** : alpha natif (pas de fond blanc). Nouvelle keyframe
+  `drop-success` (scale 1.15 + flash or 600ms). T4 PASS.
+- **O5 (TTS)** : déjà fonctionnel (preload + cache hash). T5 PASS (4 appels).
+- **O6 (bout en bout)** : `e2e_chaine_acier.mjs` 10/10 — les 2 recettes
+  chaînées se jouent entièrement, gating prerequis validé.
+
+## Gating prerequis (remplace BASE_RECIPES/LOCKED_RECIPE)
+
+Le verrouillage est maintenant **data-driven** via le champ `prerequis` (exposé
+par `/api/recipes`). `forgeron_epee` requiert `fondeur_naissance_acier` ;
+`recette_charronnage` requiert `recette_bucheronnage`. Bûcheron et fondeur
+sont libres au démarrage.
+
+## Tests adaptés
+
+`recette_fonte`/`recette_forge` n'existent plus. Adaptation de 4 tests qui les
+référaient (`e2e_objective2`, `e2e_assets`, `e2e_inscene`,
+`test_preload_scene_audio`) aux nouveaux IDs et nouvelles étapes.

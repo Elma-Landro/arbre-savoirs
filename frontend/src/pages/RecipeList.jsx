@@ -5,17 +5,11 @@ import { fetchRecipes } from '../api'
 import GameAsset from '../components/GameAsset'
 
 const RECIPE_ICON_BY_ID = {
-  recette_fonte: 'icon_fondeur',
-  recette_forge: 'icon_forgeron',
+  fondeur_naissance_acier: 'v2_icon_fondeur',
+  forgeron_epee: 'v2_icon_forgeron',
   recette_bucheronnage: 'icon_bucheron',
   recette_charronnage: 'icon_charron',
 }
-
-// Ordre de progression : les 3 premiers métiers sont libres d'accès,
-// la charrette (Grande Aventure) est verrouillée tant que les 3 autres
-// métiers de base ne sont pas complétés.
-const BASE_RECIPES = ['recette_fonte', 'recette_forge', 'recette_bucheronnage']
-const LOCKED_RECIPE = 'recette_charronnage'
 
 export default function RecipeList({ progress, onOpen }) {
   const [recipes, setRecipes] = useState([])
@@ -30,29 +24,25 @@ export default function RecipeList({ progress, onOpen }) {
       .finally(() => setLoading(false))
   }, [])
 
-  // Combien de métiers de base sont complétés ?
-  const baseCompletedCount = BASE_RECIPES.filter((id) =>
-    progress.isCompleted(id)
-  ).length
-  const allBaseCompleted = baseCompletedCount === BASE_RECIPES.length
+  // Gating data-driven via le champ prerequis (chaîne causale v2.0).
+  // Une recette est débloquée si son prerequis est complété (ou absent).
+  // Une recette déjà complétée reste accessible.
+  const isUnlocked = (r) => {
+    if (progress.isCompleted(r.id)) return true
+    if (!r.prerequis) return true
+    return progress.isCompleted(r.prerequis)
+  }
 
-  // Détection du déblocage de la charrette : bannière de félicitations
-  // temporaire (4 s) affichée quand les 3 métiers de base sont complétés.
+  // Bannière de félicitations quand une recette à prerequis se débloque.
+  const newlyUnlocked = recipes.filter(
+    (r) => r.prerequis && !progress.isCompleted(r.id) && isUnlocked(r)
+  )
   useEffect(() => {
-    if (!allBaseCompleted) return
+    if (newlyUnlocked.length === 0) return
     setUnlockBanner(true)
     const timer = setTimeout(() => setUnlockBanner(false), 4000)
     return () => clearTimeout(timer)
-  }, [allBaseCompleted])
-
-  // Une recette est débloquée si elle fait partie des métiers de base,
-  // OU si tous les métiers de base sont complétés (auquel cas la charrette
-  // se débloque). Une recette déjà complétée reste bien sûr accessible.
-  const isUnlocked = (recipeId) => {
-    if (progress.isCompleted(recipeId)) return true
-    if (recipeId === LOCKED_RECIPE) return allBaseCompleted
-    return true
-  }
+  }, [newlyUnlocked.length])
 
   if (loading) return <p className="text-center text-xl py-10">Chargement des recettes… 🌳</p>
   if (error) return <p className="text-center text-red-600 py-10">Erreur : {error}</p>
@@ -90,14 +80,14 @@ export default function RecipeList({ progress, onOpen }) {
         </div>
       </header>
 
-      {/* Bannière de félicitations quand la charrette se débloque */}
-      {unlockBanner && (
+      {/* Bannière de félicitations quand une nouvelle recette se débloque */}
+      {unlockBanner && newlyUnlocked.length > 0 && (
         <div
           role="status"
           className="mb-6 animate-bounce rounded-2xl border-2 border-green-400 bg-green-100 px-6 py-4 text-center shadow-lg"
         >
           <p className="text-xl font-extrabold text-green-800">
-            🎉 Bravo ! Tu as débloqué la Grande Aventure : la charrette ! 🎉
+            🎉 Bravo ! Tu as débloqué : {newlyUnlocked.map((r) => r.titre).join(', ')} ! 🎉
           </p>
         </div>
       )}
@@ -106,7 +96,7 @@ export default function RecipeList({ progress, onOpen }) {
         {recipes.map((r) => {
           const done = progress.isCompleted(r.id)
           const iconAsset = RECIPE_ICON_BY_ID[r.id]
-          const unlocked = isUnlocked(r.id)
+          const unlocked = isUnlocked(r)
           return (
             <button
               key={r.id}
@@ -122,7 +112,9 @@ export default function RecipeList({ progress, onOpen }) {
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-2xl">
                   <span className="text-5xl drop-shadow" aria-hidden="true">🔒</span>
                   <span className="rounded-full bg-stone-800/85 px-3 py-1 text-sm font-semibold text-white">
-                    Complète les autres métiers pour débloquer !
+                    {r.prerequis ? `Complète d'abord : ${
+                      recipes.find((x) => x.id === r.prerequis)?.titre || r.prerequis
+                    }` : 'Complète les autres métiers pour débloquer !'}
                   </span>
                 </div>
               )}

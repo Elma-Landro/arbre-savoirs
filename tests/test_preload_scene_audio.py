@@ -19,13 +19,13 @@ FAIL = "\033[31mFAIL\033[0m"
 
 
 def test_preload_scene_audio_contract() -> tuple[bool, str]:
-    recipe = main.GRAPH.recipe("recette_fonte")
+    recipe = main.GRAPH.recipe("fondeur_naissance_acier")
     expected_count = len(recipe["scenario"]["steps"]) * 2
 
-    req = main.PreloadSceneAudioRequest(recipe_id="recette_fonte", child_name="Léa")
+    req = main.PreloadSceneAudioRequest(recipe_id="fondeur_naissance_acier", child_name="Léa")
     data = main.api_preload_scene_audio(req)
 
-    if data["recipe_id"] != "recette_fonte":
+    if data["recipe_id"] != "fondeur_naissance_acier":
         return False, f"recipe_id inattendu : {data['recipe_id']}"
     if data["count"] != expected_count:
         return False, f"count={data['count']} attendu={expected_count}"
@@ -44,7 +44,7 @@ def test_preload_scene_audio_contract() -> tuple[bool, str]:
             path = main.AUDIO_OUT_DIR / filename
             if not path.exists() or path.stat().st_size <= 0:
                 return False, f"{step_id}/{key}: fichier audio non généré {filename}"
-    return True, f"{expected_count} pistes réelles préchargées pour recette_fonte."
+    return True, f"{expected_count} pistes réelles préchargées pour fondeur_naissance_acier."
 
 
 def main_test() -> int:

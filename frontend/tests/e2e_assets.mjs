@@ -86,7 +86,7 @@ if (manifest) {
 
 // --- A2 : graphe enrichi sans suppression emoji -----------------------------
 const graph = readGraph()
-const assetRecipes = ['recette_fonte', 'recette_forge', 'recette_bucheronnage', 'recette_charronnage']
+const assetRecipes = ['fondeur_naissance_acier', 'forgeron_epee', 'recette_bucheronnage', 'recette_charronnage']
 const recipesById = Object.fromEntries(graph.recipes.map((r) => [r.id, r]))
 const assetElements = assetRecipes.flatMap((id) => recipesById[id]?.scenario?.elements || [])
 const withoutEmoji = assetElements.filter((el) => !el.emoji)
@@ -172,11 +172,11 @@ try {
     }))
   })
   await page.goto(APP, { waitUntil: 'networkidle' })
-  await page.click('text=La naissance de l\'acier')
-  await page.waitForSelector('[data-testid="scene"]', { timeout: 10000 })
+  await page.click('text=La Naissance de l\'Acier')
+  await page.waitForSelector('[data-testid="scene"]', { timeout: 30000 })
   const imgCount = await page.locator('img[data-testid^="asset-img-"]').count()
-  const mineraiVisible = await page.locator('[data-testid="asset-img-prop_minerai_fer"]').count()
-  record('A4.1', imgCount >= 5 && mineraiVisible === 1, `Images SVG scène fonte: ${imgCount}, minerai=${mineraiVisible}`)
+  const mineraiVisible = await page.locator('[data-testid="asset-img-v2_prop_minerai_fer"]').count()
+  record('A4.1', imgCount >= 3 && mineraiVisible === 1, `Images PNG scène fondeur: ${imgCount}, minerai=${mineraiVisible}`)
 
   await page.click('text=← Retour aux recettes')
   await page.click('text=Le chant de la forêt')

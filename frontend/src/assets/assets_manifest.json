@@ -233,5 +233,101 @@
     "emoji": "🔥",
     "label": "Forge enluminée",
     "status": "enluminure_validated"
+  },
+  "v2_bg_fondeur": {
+    "src": "/assets/chaine_acier/fondeur_bg_atelier.png",
+    "emoji": "🔥",
+    "label": "Fond atelier fondeur",
+    "status": "enluminure_validated"
+  },
+  "v2_bg_forgeron": {
+    "src": "/assets/chaine_acier/forgeron_bg_atelier.png",
+    "emoji": "⚒️",
+    "label": "Fond atelier forgeron",
+    "status": "enluminure_validated"
+  },
+  "v2_icon_fondeur": {
+    "src": "/assets/chaine_acier/fondeur_icon_recette.png",
+    "emoji": "🔥",
+    "label": "Icône fondeur",
+    "status": "enluminure_validated"
+  },
+  "v2_icon_forgeron": {
+    "src": "/assets/chaine_acier/forgeron_icon_recette.png",
+    "emoji": "⚒️",
+    "label": "Icône forgeron",
+    "status": "enluminure_validated"
+  },
+  "v2_prop_minerai_fer": {
+    "src": "/assets/chaine_acier/forgeron_prop_minerai_fer.png",
+    "emoji": "🪨",
+    "label": "Minerai de fer",
+    "status": "enluminure_validated"
+  },
+  "v2_prop_charbon": {
+    "src": "/assets/chaine_acier/forgeron_prop_charbon.png",
+    "emoji": "⚫",
+    "label": "Charbon",
+    "status": "enluminure_validated"
+  },
+  "v2_prop_acier_liquide": {
+    "src": "/assets/chaine_acier/fondeur_prop_acier_liquide.png",
+    "emoji": "🧪",
+    "label": "Acier liquide",
+    "status": "enluminure_validated"
+  },
+  "v2_prop_moule_lingot": {
+    "src": "/assets/chaine_acier/fondeur_prop_moule_lingot.png",
+    "emoji": "🧱",
+    "label": "Moule à lingot",
+    "status": "enluminure_validated"
+  },
+  "v2_prop_tablier": {
+    "src": "/assets/chaine_acier/forgeron_prop_tablier.png",
+    "emoji": "🥋",
+    "label": "Tablier de cuir",
+    "status": "enluminure_validated"
+  },
+  "v2_prop_gants": {
+    "src": "/assets/chaine_acier/forgeron_prop_gants.png",
+    "emoji": "🧤",
+    "label": "Gants de forge",
+    "status": "enluminure_validated"
+  },
+  "v2_prop_tenailles": {
+    "src": "/assets/chaine_acier/forgeron_prop_tenailles.png",
+    "emoji": "🔧",
+    "label": "Tenailles",
+    "status": "enluminure_validated"
+  },
+  "v2_prop_marteau": {
+    "src": "/assets/chaine_acier/forgeron_prop_marteau.png",
+    "emoji": "🔨",
+    "label": "Marteau de forge",
+    "status": "enluminure_validated"
+  },
+  "v2_prop_seau_eau": {
+    "src": "/assets/chaine_acier/forgeron_prop_seau_eau.png",
+    "emoji": "🪣",
+    "label": "Seau d'eau",
+    "status": "enluminure_validated"
+  },
+  "v2_prop_metal_chaud": {
+    "src": "/assets/chaine_acier/forgeron_prop_metal_chaud.png",
+    "emoji": "🔥",
+    "label": "Métal chaud",
+    "status": "enluminure_validated"
+  },
+  "v2_result_lingot_acier": {
+    "src": "/assets/chaine_acier/fondeur_result_lingot_acier.png",
+    "emoji": "🧱",
+    "label": "Lingot d'acier",
+    "status": "enluminure_validated"
+  },
+  "v2_result_epee": {
+    "src": "/assets/chaine_acier/forgeron_result_epee.png",
+    "emoji": "⚔️",
+    "label": "Épée du chevalier",
+    "status": "enluminure_validated"
   }
 }

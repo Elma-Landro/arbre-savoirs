@@ -58,6 +58,12 @@ nodes:
     emoji: "⚔️"
     description: "Un objet utile forgé dans le métal, par exemple un marteau ou une lame."
 
+  - id: epee_forgee
+    label: "Épée du chevalier"
+    type: objet
+    emoji: "⚔️"
+    description: "Une lame brillante forgée dans l'acier, trempée dans l'eau pour être solide et tranchante."
+
   # --- Chaîne du bois --------------------------------------------------------
   - id: bois_brut
     label: "Tronc d'arbre"
@@ -93,97 +99,111 @@ nodes:
 # RECETTES (scènes interactives)
 # -----------------------------------------------------------------------------
 recipes:
-  # === Chaîne métal : minerai -> acier -> outil ==============================
-  - id: recette_fonte
-    titre: "La naissance de l'acier"
+  # === Chaîne métal : minerai -> acier -> épée (v2.0 enluminure) ==============
+  # Chaîne causale : fondeur_naissance_acier produit le lingot d'acier qui sert
+  # de matière première à forgeron_epee. Le champ prerequis verrouille la 2e
+  # recette jusqu'à completion de la 1re (géré côté frontend).
+  - id: fondeur_naissance_acier
+    titre: "La Naissance de l'Acier"
     metier: "Fondeur"
+    ordre: 1
+    prerequis: null
     ingredients:
       - id: minerai_fer
         quantite: 1
       - id: charbon
         quantite: 1
-      - id: chaleur
-        quantite: 1
     resultat:
       - id: lingot_acier
     scenario:
-      background: "atelier_fonderie"
+      background: "fondeur_bg_atelier"
       avatar: "👧"
       elements:
-        - { id: tablier, emoji: "🥋", asset: "avatar_tablier_forgeron", type: "draggable" }
-        - { id: gants, emoji: "🧤", asset: "avatar_gants", type: "draggable" }
-        - { id: zone_preparation, emoji: "🧺", asset: "zone_preparation", type: "dropzone" }
-        - { id: minerai, emoji: "🪨", asset: "prop_minerai_fer", type: "draggable" }
-        - { id: charbon_elt, emoji: "⚫", asset: "prop_charbon", type: "draggable" }
-        - { id: metal_liquide, emoji: "🧪", asset: "prop_metal_liquide", type: "draggable" }
-        - { id: four, emoji: "🔥", asset: "zone_four_fonderie", type: "dropzone" }
-        - { id: moule, emoji: "🧱", asset: "zone_moule_lingot", type: "dropzone" }
+        # Dropzones (pièces fixes du décor)
+        - { id: four_haut_fourneau, emoji: "🔥", asset: "v2_bg_fondeur", type: "dropzone" }
+        - { id: moule_lingot,       emoji: "🧱", asset: "v2_prop_moule_lingot", type: "dropzone" }
+        - { id: zone_livraison,     emoji: "📦", asset: "v2_result_lingot_acier", type: "dropzone" }
+        # Draggables (props à saisir)
+        - { id: minerai_fer,    emoji: "🪨", asset: "v2_prop_minerai_fer",  type: "draggable" }
+        - { id: charbon,        emoji: "⚫", asset: "v2_prop_charbon",      type: "draggable" }
+        - { id: acier_liquide,  emoji: "🧪", asset: "v2_prop_acier_liquide", type: "draggable" }
+        - { id: lingot_refroidi, emoji: "🧱", asset: "v2_result_lingot_acier", type: "draggable" }
       steps:
         - id: 1
-          instruction_tts: "Avant de commencer, mets ton tablier de forgeron pour te protéger, comme un vrai pro !"
-          action_attendue: { type: "drag_and_drop", source: "tablier", target: "zone_preparation" }
-          success_tts: "Super ! Ton tablier est en place, tu es prêt à travailler en sécurité."
+          instruction_tts: "Mets le minerai de fer dans le grand four !"
+          action_attendue: { type: "drag_and_drop", source: "minerai_fer", target: "four_haut_fourneau" }
+          success_tts: "Bravo ! Le minerai chauffe dans le fourneau."
         - id: 2
-          instruction_tts: "N'oublie pas tes gants ! Le métal, ça brûle très fort !"
-          action_attendue: { type: "drag_and_drop", source: "gants", target: "zone_preparation" }
-          success_tts: "Parfait ! Avec tes gants, tes petites mains sont bien protégées."
+          instruction_tts: "Ajoute le charbon pour faire monter le feu !"
+          action_attendue: { type: "drag_and_drop", source: "charbon", target: "four_haut_fourneau" }
+          success_tts: "Super ! Le feu est très très chaud maintenant."
         - id: 3
-          instruction_tts: "Pour faire naître l'acier, commence par jeter le minerai de fer dans le grand four brûlant !"
-          action_attendue: { type: "drag_and_drop", source: "minerai", target: "four" }
-          success_tts: "Bravo ! Le minerai de fer plonge dans les flammes et commence à fondre."
+          instruction_tts: "Verse l'acier liquide dans le moule !"
+          action_attendue: { type: "drag_and_drop", source: "acier_liquide", target: "moule_lingot" }
+          success_tts: "Parfait ! L'acier coule dans le moule."
+        # Étape 4 du manifest (click moule) -> convertie en drag : on récupère
+        # le lingot refroidi et on le dépose sur la zone de livraison.
         - id: 4
-          instruction_tts: "Maintenant, ajoute le charbon pour que le feu soit encore plus chaud !"
-          action_attendue: { type: "drag_and_drop", source: "charbon_elt", target: "four" }
-          success_tts: "Excellent ! Avec le charbon, la chaleur devient si forte que la roche se transforme en métal liquide."
-        - id: 5
-          instruction_tts: "Le métal est liquide et brillant ! Verse-le dans le moule pour lui donner une belle forme !"
-          action_attendue: { type: "drag_and_drop", source: "metal_liquide", target: "moule" }
-          success_tts: "Magnifique ! Le métal refroidit et devient un superbe lingot d'acier tout brillant !"
+          instruction_tts: "L'acier a refroidi ! Récupère le beau lingot et dépose-le sur la table !"
+          action_attendue: { type: "drag_and_drop", source: "lingot_refroidi", target: "zone_livraison" }
+          success_tts: "Incroyable ! Tu as fabriqué un lingot d'acier !"
 
-  - id: recette_forge
-    titre: "Le souffle du forgeron"
+  - id: forgeron_epee
+    titre: "L'Épée du Chevalier"
     metier: "Forgeron"
+    ordre: 2
+    prerequis: "fondeur_naissance_acier"
     ingredients:
       - id: lingot_acier
         quantite: 1
       - id: chaleur
         quantite: 1
     resultat:
-      - id: outil_acier
-      - id: clou_fer
+      - id: epee_forgee
     scenario:
-      background: "atelier_forgeron"
+      background: "forgeron_bg_atelier"
       avatar: "👧"
       elements:
-        - { id: tablier, emoji: "🥋", asset: "avatar_tablier_forgeron", type: "draggable" }
-        - { id: gants, emoji: "🧤", asset: "avatar_gants", type: "draggable" }
-        - { id: zone_preparation, emoji: "🧺", asset: "zone_preparation", type: "dropzone" }
-        - { id: lingot, emoji: "🧱", asset: "prop_lingot_acier", type: "draggable" }
-        - { id: feu_forge, emoji: "🔥", asset: "zone_feu_forge", type: "dropzone" }
-        - { id: enclume, emoji: "⚙️", asset: "zone_enclume", type: "dropzone" }
-        - { id: marteau, emoji: "🔨", asset: "prop_marteau", type: "draggable" }
-        - { id: outil, emoji: "⚔️", asset: "result_outil_acier", type: "static" }
+        # Dropzones (pièces fixes du décor)
+        - { id: forge_feu,   emoji: "🔥", asset: "v2_bg_forgeron", type: "dropzone" }
+        - { id: avatar_zone, emoji: "🧒", asset: "v2_prop_tablier", type: "dropzone" }
+        - { id: metal_chaud, emoji: "⚙️", asset: "v2_prop_metal_chaud", type: "dropzone" }
+        - { id: enclume,     emoji: "⚒️", asset: "v2_prop_metal_chaud", type: "dropzone" }
+        - { id: seau_eau,    emoji: "🪣", asset: "v2_prop_seau_eau", type: "dropzone" }
+        # Draggables (props à saisir)
+        - { id: lingot_acier, emoji: "🧱", asset: "v2_result_lingot_acier", type: "draggable" }
+        - { id: tablier,      emoji: "🥋", asset: "v2_prop_tablier",   type: "draggable" }
+        - { id: gants,        emoji: "🧤", asset: "v2_prop_gants",     type: "draggable" }
+        - { id: tenailles,    emoji: "🔧", asset: "v2_prop_tenailles", type: "draggable" }
+        - { id: marteau,      emoji: "🔨", asset: "v2_prop_marteau",   type: "draggable" }
+        - { id: metal_chaud_prop, emoji: "🔥", asset: "v2_prop_metal_chaud", type: "draggable" }
       steps:
         - id: 1
-          instruction_tts: "Pour forger en sécurité, enfile d'abord ton tablier de forgeron !"
-          action_attendue: { type: "drag_and_drop", source: "tablier", target: "zone_preparation" }
-          success_tts: "Super ! Ton tablier te protège des étincelles."
+          instruction_tts: "Mets ton tablier de forgeron pour te protéger !"
+          action_attendue: { type: "drag_and_drop", source: "tablier", target: "avatar_zone" }
+          success_tts: "Parfait, tu es bien protégé !"
         - id: 2
-          instruction_tts: "Mets aussi tes gants, pour ne pas te brûler les mains avec le métal chaud !"
-          action_attendue: { type: "drag_and_drop", source: "gants", target: "zone_preparation" }
-          success_tts: "Parfait ! Tes mains sont bien à l'abri. On peut commencer !"
+          instruction_tts: "Enfile tes gants de forge pour tes mains !"
+          action_attendue: { type: "drag_and_drop", source: "gants", target: "avatar_zone" }
+          success_tts: "Bien ! Tes mains sont protégées de la chaleur."
         - id: 3
-          instruction_tts: "Pour forger un outil, chauffe d'abord le lingot d'acier dans le feu de la forge !"
-          action_attendue: { type: "drag_and_drop", source: "lingot", target: "feu_forge" }
-          success_tts: "Parfait ! Le lingot rougeoie, il est maintenant assez chaud pour être façonné."
+          instruction_tts: "Mets le lingot d'acier dans le feu pour le chauffer !"
+          action_attendue: { type: "drag_and_drop", source: "lingot_acier", target: "forge_feu" }
+          success_tts: "Le lingot rougeoie, il est prêt à être forgé !"
         - id: 4
-          instruction_tts: "Dépose le lingot chaud sur l'enclume pour pouvoir le frapper !"
-          action_attendue: { type: "drag_and_drop", source: "lingot", target: "enclume" }
-          success_tts: "Très bien ! Le lingot est posé sur l'enclume, prêt à prendre forme."
+          instruction_tts: "Saisis le métal chaud avec les tenailles !"
+          action_attendue: { type: "drag_and_drop", source: "tenailles", target: "metal_chaud" }
+          success_tts: "Attention c'est chaud ! Tu le tiens bien."
+        # Étape 5 du manifest (click marteau ×5) -> convertie en drag unique
+        # symbolique (le moteur n'a pas de compteur de répétitions).
         - id: 5
-          instruction_tts: "Frappe fort avec le marteau pour donner la forme d'un outil !"
+          instruction_tts: "Frappe le métal sur l'enclume avec le marteau, fort et longtemps !"
           action_attendue: { type: "drag_and_drop", source: "marteau", target: "enclume" }
-          success_tts: "Boum, boum, boum ! Avec tes coups de marteau, l'acier devient un magnifique outil. Quel talent de forgeron !"
+          success_tts: "Toc toc toc ! La lame prend forme !"
+        - id: 6
+          instruction_tts: "Trempe l'épée dans l'eau pour la durcir !"
+          action_attendue: { type: "drag_and_drop", source: "metal_chaud_prop", target: "seau_eau" }
+          success_tts: "Pshhhhh ! L'acier durcit. Ton épée est forgée !"
 
   # === Chaîne bois ===========================================================
   - id: recette_bucheronnage
@@ -226,6 +246,7 @@ recipes:
   - id: recette_charronnage
     titre: "La charrette qui roule"
     metier: "Charron"
+    prerequis: "recette_bucheronnage"
     ingredients:
       - id: planche_bois
         quantite: 1

@@ -38,3 +38,16 @@ implémentées par respect du minimalisme. Classées par thème.
 - **Tests unitaires fins** (pytest par module), **CI**, **Docker**, **schéma JSON formel**.
 - **Prégénération des audios** : synthétiser les phrases d'une recette au chargement de la scène pour une lecture instantanée.
 
+## Chaîne acier v2.0 (session 2026-06-23)
+- **Nouveaux assets bûcheron/charron en style v2.0** : le ZIP ne contenait que
+  les 16 assets de la chaîne métal. Les recettes bûcheron/charron utilisent
+  encore les anciens assets SVG "pilot".
+- **Étapes click/répétitions natives** : converties en drag_and_drop cette
+  session (le moteur Scene.jsx ne gère que le drag). Implémenter un handler
+  onClick + compteur de répétitions pour fidéliser le brief original
+  (ex : 5 coups de marteau réels sur l'enclume).
+- **Réécriture du générateur LLM** pour la chaîne causale v2.0 (prerequis +
+  debloque_recette) — non couverte.
+- **`e2e_objective5`** : tente de compléter "La charrette qui roule" qui est
+  verrouillée — dysfonctionnement de test antérieur non traité.
+
