@@ -119,10 +119,11 @@ recipes:
       background: "fondeur_bg_atelier"
       avatar: "👧"
       elements:
-        # Dropzones (pièces fixes du décor)
-        - { id: four_haut_fourneau, emoji: "🔥", asset: "v2_bg_fondeur", type: "dropzone" }
-        - { id: moule_lingot,       emoji: "🧱", asset: "v2_prop_moule_lingot", type: "dropzone" }
-        - { id: zone_livraison,     emoji: "📦", asset: "v2_result_lingot_acier", type: "dropzone" }
+        # Dropzones (pièces fixes du décor — déjà dessinées dans le fond,
+        # pas de sprite visible, juste un halo de dépôt transparent).
+        - { id: four_haut_fourneau, emoji: "🔥", type: "dropzone" }
+        - { id: moule_lingot,       emoji: "🧱", type: "dropzone" }
+        - { id: zone_livraison,     emoji: "📦", type: "dropzone" }
         # Draggables (props à saisir)
         - { id: minerai_fer,    emoji: "🪨", asset: "v2_prop_minerai_fer",  type: "draggable" }
         - { id: charbon,        emoji: "⚫", asset: "v2_prop_charbon",      type: "draggable" }
@@ -164,12 +165,13 @@ recipes:
       background: "forgeron_bg_atelier"
       avatar: "👧"
       elements:
-        # Dropzones (pièces fixes du décor)
-        - { id: forge_feu,   emoji: "🔥", asset: "v2_bg_forgeron", type: "dropzone" }
-        - { id: avatar_zone, emoji: "🧒", asset: "v2_prop_tablier", type: "dropzone" }
-        - { id: metal_chaud, emoji: "⚙️", asset: "v2_prop_metal_chaud", type: "dropzone" }
-        - { id: enclume,     emoji: "⚒️", asset: "v2_prop_metal_chaud", type: "dropzone" }
-        - { id: seau_eau,    emoji: "🪣", asset: "v2_prop_seau_eau", type: "dropzone" }
+        # Dropzones (pièces fixes du décor — déjà dessinées dans le fond,
+        # pas de sprite visible, juste un halo de dépôt transparent).
+        - { id: forge_feu,   emoji: "🔥", type: "dropzone" }
+        - { id: avatar_zone, emoji: "🧒", type: "dropzone" }
+        - { id: metal_chaud, emoji: "⚙️", type: "dropzone" }
+        - { id: enclume,     emoji: "⚒️", type: "dropzone" }
+        - { id: seau_eau,    emoji: "🪣", type: "dropzone" }
         # Draggables (props à saisir)
         - { id: lingot_acier, emoji: "🧱", asset: "v2_result_lingot_acier", type: "draggable" }
         - { id: tablier,      emoji: "🥋", asset: "v2_prop_tablier",   type: "draggable" }
@@ -203,7 +205,7 @@ recipes:
         - id: 6
           instruction_tts: "Trempe l'épée dans l'eau pour la durcir !"
           action_attendue: { type: "drag_and_drop", source: "metal_chaud_prop", target: "seau_eau" }
-          success_tts: "Pshhhhh ! L'acier durcit. Ton épée est forgée !"
+          success_tts: "Magnifique ! L'épée est trempée et brillante. Quelle belle lame de forgeron !"
 
   # === Chaîne bois ===========================================================
   - id: recette_bucheronnage

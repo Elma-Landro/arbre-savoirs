@@ -220,6 +220,9 @@ export default function Scene({ scenario, childName, avatarConfig, resultId, onC
   const [activeId, setActiveId] = useState(null)
   // Brief O4.4 : dropzone qui vient de recevoir un dépôt correct (flash doré).
   const [successTargetId, setSuccessTargetId] = useState(null)
+  // Props consommés : un prop déposé avec succès disparaît (brûlé, enfilé,
+  // transformé) — anti-pattern évité (les props ne reviennent pas en staging).
+  const [consumedIds, setConsumedIds] = useState({})
   const sensor = useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
 
   const step = scenario.steps[stepIdx]
@@ -266,6 +269,8 @@ export default function Scene({ scenario, childName, avatarConfig, resultId, onC
     if (src === expectedSource && tgt === expectedTarget) {
       // T2.3 — succès : on lit le success_tts, puis on passe à l'étape suivante.
       setWrongId(null)
+      // La source est consommée (brûlée, enfilée, transformée) : elle disparaît.
+      setConsumedIds((m) => ({ ...m, [src]: true }))
       // Brief O4.4 : flash doré + scale sur la dropzone cible pendant 600ms.
       setSuccessTargetId(tgt)
       setTimeout(() => setSuccessTargetId(null), 600)
@@ -308,22 +313,36 @@ export default function Scene({ scenario, childName, avatarConfig, resultId, onC
             : { background: bgCss }
         }
       >
-        {/* Bandeau supérieur : avatar (gauche) + compteur d'étape (droite) */}
-        <div className="relative z-20 flex items-center justify-between mb-3">
-          <div
-            className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-enl-or bg-enl-ivoire/75 shadow-lg"
-            title={childName}
-          >
-            {avatarConfig ? (
-              <AvatarPreview config={avatarConfig} size={56} />
-            ) : (
-              <span className="text-5xl drop-shadow">{scenario.avatar || '👧'}</span>
-            )}
-          </div>
-          <span className="rounded-full bg-enl-encre/70 text-enl-ivoire px-3 py-1 text-sm font-bold">
+        {/* Bandeau supérieur : juste le compteur d'étape discret.
+            L'avatar enfant est maintenant affiché EN GRAND dans le décor (voir
+            plus bas, à l'emplacement avatar_zone ou à droite par défaut). */}
+        <div className="pointer-events-none relative z-20 mb-2 flex justify-end">
+          <span className="pointer-events-auto rounded-full bg-enl-encre/70 text-enl-ivoire px-3 py-1 text-xs font-bold">
             Étape {stepIdx + 1} / {total}
           </span>
         </div>
+
+        {/* Avatar enfant intégré dans la scène (grand, positionné dans le décor).
+            Si la scène a une dropzone avatar_zone, l'avatar est aligné dessus
+            (pour que l'enfant dépose tablier/gants SUR le personnage). Sinon il
+            est placé à droite par défaut. */}
+        {(() => {
+          const avatarPos = layout.avatar_zone || { left: '70%', top: '28%', w: '22%' }
+          return (
+            <div
+              className="pointer-events-none absolute z-[5] flex items-end justify-center"
+              style={{ left: avatarPos.left, top: avatarPos.top, width: avatarPos.w, height: '60%' }}
+              title={childName}
+              aria-label={`Personnage ${childName}`}
+            >
+              {avatarConfig ? (
+                <AvatarPreview config={avatarConfig} size={160} />
+              ) : (
+                <span className="text-8xl drop-shadow-lg">{scenario.avatar || '👧'}</span>
+              )}
+            </div>
+          )
+        })()}
 
         {/* Bulle guide enfant (remplace l'ancienne carte blanche d'instruction). */}
         <GuideBubble text={step.instruction_tts} />
@@ -341,6 +360,9 @@ export default function Scene({ scenario, childName, avatarConfig, resultId, onC
           {(scenario.elements || []).map((el) => {
             const isWrongSrc = wrongId && wrongId.startsWith(`${el.id}>`)
             const isWrongTgt = wrongId && wrongId.endsWith(`>${el.id}`)
+            // Un prop consommé (dépôt réussi) disparaît : brûlé, enfilé ou
+            // transformé. On ne masque pas les dropzones fixes du décor.
+            if (el.type === 'draggable' && consumedIds[el.id]) return null
             const pos = posOf(el.id)
             // Wrapper positionné : si pas de position (fallback total), on
             // reste dans le flux via un conteneur inline bas.

@@ -1,9 +1,13 @@
-// GuideBubble.jsx — Bulle guide enfant (Patch 4 du brief refonte UX).
+// GuideBubble.jsx — Indicateur d'instruction minimaliste (Patch 4 révisé).
 //
-// Remplace la carte blanche d'instruction (div.card) qui donnait un aspect
-// "web app" à la scène. Bulle de dialogue chaleureuse, fond ivoire semi-opaque,
-// bordure or, police font-story en gros. data-testid="instruction" préservé
-// (les tests E2E e2e_objective2/5 l'utilisent).
+// À 4-8 ans, on ne sait pas lire : la consigne se vit par la VOIX (TTS), pas
+// par le texte. Le bandeau doit donc être DISCRET — un petit témoin en bas de
+// scène qui signale "on te parle" sans masquer le décor ni les objets.
+//
+// Le texte reste dans le DOM (aria-live) pour l'accessibilité et les tests
+// e2e (data-testid="instruction"), mais visuellement c'est une pastille
+// compacte avec un pictogramme son + le texte en tout petit, pas un bandeau
+// pleine largeur.
 
 export default function GuideBubble({ text, visible = true }) {
   if (!visible || !text) return null
@@ -12,19 +16,20 @@ export default function GuideBubble({ text, visible = true }) {
       data-testid="instruction"
       role="status"
       aria-live="polite"
-      className="relative z-20 mb-4 flex items-center gap-3 rounded-3xl border-2 border-enl-or/60 bg-enl-ivoire/90 px-5 py-3 shadow-lg"
+      className="pointer-events-none absolute bottom-3 left-1/2 z-30 flex max-w-[70%] -translate-x-1/2 items-center gap-2 rounded-full border border-enl-or/50 bg-enl-encre/70 px-4 py-1.5 shadow-lg backdrop-blur-sm"
     >
-      {/* Médaillon guide (style enluminure) */}
+      {/* Pictogramme son pulsant : signale "on t'écoute / écoute" */}
       <span
-        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-enl-or bg-enl-terre text-2xl shadow-inner"
+        className="shrink-0 text-base text-enl-or"
+        style={{ animation: 'pulse-gold 2s ease-in-out infinite' }}
         aria-hidden="true"
       >
-        🗣️
+        🔊
       </span>
-      {/* Texte d'instruction — gros, manuscrit, lisible par un adulte à côté */}
-      <p className="font-story text-xl leading-snug text-enl-encre drop-shadow-sm">
+      {/* Texte en tout petit — pour le parent à côté, pas l'enfant */}
+      <span className="truncate text-xs text-enl-ivoire/90" title={text}>
         {text}
-      </p>
+      </span>
     </div>
   )
 }
