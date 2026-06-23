@@ -54,7 +54,10 @@ export default function GameAsset({ assetId, emoji, label, size = 'lg' }) {
       alt={text}
       title={text}
       onError={() => setFailed(true)}
-      className={`${dimensions} object-contain select-none drop-shadow-[2px_3px_4px_rgba(92,58,33,0.30)]`}
+      // pointer-events-none : l'<img> ne doit pas intercepter les événements
+      // pointer (dnd-kit), sinon le drag ne s'active pas (l'<img> masque le div
+      // draggable parent). draggable=false empêche le ghost natif du navigateur.
+      className={`${dimensions} pointer-events-none object-contain select-none drop-shadow-[2px_3px_4px_rgba(92,58,33,0.30)]`}
       draggable="false"
     />
   )

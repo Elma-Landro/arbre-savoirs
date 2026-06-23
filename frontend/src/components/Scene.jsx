@@ -17,6 +17,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   DndContext, DragOverlay, useDraggable, useDroppable, PointerSensor, useSensor,
+  closestCorners,
 } from '@dnd-kit/core'
 import GameAsset from './GameAsset'
 import AvatarPreview from './AvatarPreview'
@@ -337,18 +338,21 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
       <div data-testid="scene" className="rounded-3xl overflow-hidden shadow-xl border-4 border-enl-or/40">
         <DndContext
           sensors={[sensor]}
+          collisionDetection={closestCorners}
           onDragStart={(e) => setActiveId(e.active.id)}
           onDragCancel={() => setActiveId(null)}
           onDragEnd={handleDragEnd}
         >
           {/* Zone de jeu 16:9 */}
           <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
-            {/* Fond peint */}
+            {/* Fond peint — pointer-events-none pour ne pas intercepter les
+                événements de drop des hotspots superposés. */}
             <img
               src={bgSrc}
               alt=""
               aria-hidden="true"
-              className="absolute inset-0 w-full h-full object-cover"
+              draggable="false"
+              className="pointer-events-none absolute inset-0 w-full h-full object-cover"
             />
 
             {/* Calques d'effet */}
@@ -406,10 +410,6 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
             >
               <p className="text-base font-story text-enl-ivoire leading-snug">🎵 {step.instruction_tts}</p>
             </div>
-
-            <DragOverlay dropAnimation={null}>
-              <DragOverlayGhost el={activeEl} />
-            </DragOverlay>
           </div>
 
           {/* Rail inventaire — props draggables sous la scène */}
@@ -430,6 +430,12 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
               )
             })}
           </div>
+
+          {/* DragOverlay au niveau du DndContext (pas dans le conteneur 16:9
+              overflow-hidden, sinon le ghost est clippé et la collision rate). */}
+          <DragOverlay dropAnimation={null}>
+            <DragOverlayGhost el={activeEl} />
+          </DragOverlay>
         </DndContext>
       </div>
     )
@@ -470,6 +476,7 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
 
         <DndContext
           sensors={[sensor]}
+          collisionDetection={closestCorners}
           onDragStart={(e) => setActiveId(e.active.id)}
           onDragCancel={() => setActiveId(null)}
           onDragEnd={handleDragEnd}
