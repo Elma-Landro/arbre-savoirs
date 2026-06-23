@@ -5,6 +5,7 @@ import { fetchRecipes } from '../api'
 import GameAsset from '../components/GameAsset'
 
 const RECIPE_ICON_BY_ID = {
+  mineur_tresors_terre: 'mineur_icon_recette',
   fondeur_naissance_acier: 'v2_icon_fondeur',
   forgeron_epee: 'v2_icon_forgeron',
   recette_bucheronnage: 'icon_bucheron',
@@ -78,6 +79,24 @@ export default function RecipeList({ progress, onOpen }) {
             </span>
           )}
         </div>
+
+        {/* Sac à trésors : objets gardés pour de futures aventures (ex. orfèvre) */}
+        {progress.inventoryList.length > 0 && (
+          <div className="mt-3 inline-flex items-center gap-3 rounded-2xl border-2 border-enl-or/60 bg-enl-ivoire/70 px-4 py-2">
+            <span className="font-bold text-enl-terre">👝 Mon sac à trésors&nbsp;:</span>
+            {progress.inventoryList.map((item) => (
+              <span
+                key={item.id}
+                title={`${item.label} (réservé pour l'orfèvre)`}
+                className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 font-bold text-enl-encre shadow"
+              >
+                <span className="text-xl">{item.emoji}</span>
+                {item.label}
+                {item.count > 1 && <span className="text-enl-terre">×{item.count}</span>}
+              </span>
+            ))}
+          </div>
+        )}
       </header>
 
       {/* Bannière de félicitations quand une nouvelle recette se débloque */}

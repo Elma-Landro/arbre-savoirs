@@ -17,7 +17,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   DndContext, DragOverlay, useDraggable, useDroppable, PointerSensor, useSensor,
-  closestCorners,
 } from '@dnd-kit/core'
 import GameAsset from './GameAsset'
 import AvatarPreview from './AvatarPreview'
@@ -31,6 +30,8 @@ const BACKGROUNDS = {
   foret: 'linear-gradient(180deg,#14532d 0%,#16a34a 60%,#86efac 100%)',
   atelier_charron: 'linear-gradient(180deg,#78350f 0%,#a16207 50%,#fde68a 100%)',
   celebration: 'linear-gradient(180deg,#1e3a8a 0%,#7c3aed 50%,#f472b6 100%)',
+  // Galerie de mine : pierre sombre -> lueur de lanterne en bas.
+  mineur_bg_galerie: 'linear-gradient(180deg,#1c1917 0%,#44403c 55%,#92702f 100%)',
 }
 const IMAGE_BACKGROUNDS = {
   foret_bucheron: '/assets/zones/bg_foret_bucheron.svg',
@@ -244,6 +245,8 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
   const [done, setDone] = useState(false)
   const [activeId, setActiveId] = useState(null)
   const [successTargetId, setSuccessTargetId] = useState(null)
+  // Fond peint v2 indisponible (asset pas encore livré) -> fallback dégradé.
+  const [bgError, setBgError] = useState(false)
   const sensor = useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
 
   const step = scenario.steps[stepIdx]
@@ -338,22 +341,25 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
       <div data-testid="scene" className="rounded-3xl overflow-hidden shadow-xl border-4 border-enl-or/40">
         <DndContext
           sensors={[sensor]}
-          collisionDetection={closestCorners}
           onDragStart={(e) => setActiveId(e.active.id)}
           onDragCancel={() => setActiveId(null)}
           onDragEnd={handleDragEnd}
         >
-          {/* Zone de jeu 16:9 */}
-          <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
-            {/* Fond peint — pointer-events-none pour ne pas intercepter les
-                événements de drop des hotspots superposés. */}
-            <img
-              src={bgSrc}
-              alt=""
-              aria-hidden="true"
-              draggable="false"
-              className="pointer-events-none absolute inset-0 w-full h-full object-cover"
-            />
+          {/* Zone de jeu 16:9 (dégradé de secours si le fond peint manque) */}
+          <div
+            className="relative w-full overflow-hidden"
+            style={{ aspectRatio: '16/9', background: bgCss }}
+          >
+            {/* Fond peint — masqué si l'asset n'est pas encore livré (onError) */}
+            {!bgError && (
+              <img
+                src={bgSrc}
+                alt=""
+                aria-hidden="true"
+                onError={() => setBgError(true)}
+                className="pointer-events-none absolute inset-0 w-full h-full object-cover"
+              />
+            )}
 
             {/* Calques d'effet */}
             <SceneEffects validatedSteps={validatedSteps} layouts={effectLayouts} />
@@ -410,6 +416,10 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
             >
               <p className="text-base font-story text-enl-ivoire leading-snug">🎵 {step.instruction_tts}</p>
             </div>
+
+            <DragOverlay dropAnimation={null}>
+              <DragOverlayGhost el={activeEl} />
+            </DragOverlay>
           </div>
 
           {/* Rail inventaire — props draggables sous la scène */}
@@ -430,12 +440,6 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
               )
             })}
           </div>
-
-          {/* DragOverlay au niveau du DndContext (pas dans le conteneur 16:9
-              overflow-hidden, sinon le ghost est clippé et la collision rate). */}
-          <DragOverlay dropAnimation={null}>
-            <DragOverlayGhost el={activeEl} />
-          </DragOverlay>
         </DndContext>
       </div>
     )
@@ -476,7 +480,6 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
 
         <DndContext
           sensors={[sensor]}
-          collisionDetection={closestCorners}
           onDragStart={(e) => setActiveId(e.active.id)}
           onDragCancel={() => setActiveId(null)}
           onDragEnd={handleDragEnd}

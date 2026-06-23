@@ -329,5 +329,47 @@
     "emoji": "⚔️",
     "label": "Épée du chevalier",
     "status": "enluminure_validated"
+  },
+  "mineur_bg_galerie": {
+    "src": "/assets/mineur/mineur_bg_galerie.png",
+    "emoji": "⛏️",
+    "label": "Fond galerie de mine",
+    "status": "enluminure_validated"
+  },
+  "mineur_icon_mineur": {
+    "src": "/assets/mineur/mineur_icon_recette.png",
+    "emoji": "⛏️",
+    "label": "Icône mineur",
+    "status": "enluminure_validated"
+  },
+  "mineur_prop_pic": {
+    "src": "/assets/mineur/mineur_prop_pic.png",
+    "emoji": "⛏️",
+    "label": "Pic de mineur",
+    "status": "enluminure_validated"
+  },
+  "mineur_prop_lanterne": {
+    "src": "/assets/mineur/mineur_prop_lanterne.png",
+    "emoji": "🏮",
+    "label": "Lanterne allumée",
+    "status": "enluminure_validated"
+  },
+  "mineur_prop_pepite_or": {
+    "src": "/assets/mineur/mineur_prop_pepite_or.png",
+    "emoji": "✨",
+    "label": "Pépite d'or",
+    "status": "enluminure_validated"
+  },
+  "mineur_result_chariot_charge": {
+    "src": "/assets/mineur/mineur_result_chariot_charge.png",
+    "emoji": "🛒",
+    "label": "Chariot chargé",
+    "status": "enluminure_validated"
+  },
+  "mineur_avatar_mineur": {
+    "src": "/assets/mineur/mineur_avatar_costume.png",
+    "emoji": "🧑‍🏭",
+    "label": "Costume de mineur",
+    "status": "enluminure_validated"
   }
 }
