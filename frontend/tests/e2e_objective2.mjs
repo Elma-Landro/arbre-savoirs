@@ -43,8 +43,16 @@ try {
       visage: 'avatar_visage_souriant',
       cheveux: 'avatar_cheveux_01',
       chapeau: null,
-      tenue: 'avatar_tablier_forgeron',
+      tenue: 'avatar_tabrier_forgeron',
       accessoires: ['avatar_gants'],
+    }))
+    // Le fondeur nécessite désormais le mineur (chaîne causale 3 niveaux).
+    // On simule le mineur complété pour débloquer le fondeur dans ce test
+    // focalisé sur le moteur DnD.
+    localStorage.setItem('arbre-savoirs-progress-v1', JSON.stringify({
+      completed: { mineur_tresors_terre: true },
+      childName: 'Léa',
+      inventory: { pepite_or: 1 },
     }))
   })
 

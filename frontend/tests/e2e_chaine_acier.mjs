@@ -19,11 +19,15 @@ async function doDrag(page, srcId, tgtId) {
   const sb = await src.boundingBox()
   const tb = await tgt.boundingBox()
   if (!sb || !tb) return false
+  // Step d'activation du PointerSensor (distance:5).
   await page.mouse.move(sb.x + sb.width / 2, sb.y + sb.height / 2)
   await page.mouse.down()
-  await page.mouse.move(tb.x + tb.width / 2, tb.y + tb.height / 2, { steps: 15 })
+  await page.waitForTimeout(50)
+  await page.mouse.move(sb.x + sb.width / 2 + 8, sb.y + sb.height / 2 + 8, { steps: 5 })
+  await page.waitForTimeout(50)
+  await page.mouse.move(tb.x + tb.width / 2, tb.y + tb.height / 2, { steps: 20 })
   await page.mouse.up()
-  await page.waitForTimeout(800)
+  await page.waitForTimeout(900)
   return true
 }
 
@@ -57,15 +61,46 @@ try {
     states.push({ title, disabled: await c.isDisabled() })
   }
   const forgeronLocked = states.find((s) => s.title.includes('Épée'))?.disabled === true
-  const fondeurUnlocked = states.find((s) => s.title.includes('Naissance'))?.disabled === false
-  record('T2.1', forgeronLocked && fondeurUnlocked,
-    `forgeron verrouillé=${forgeronLocked}, fondeur débloqué=${fondeurUnlocked}`)
+  const fondeurLocked = states.find((s) => s.title.includes('Naissance'))?.disabled === true
+  const mineurUnlocked = states.find((s) => s.title.includes('Trésors'))?.disabled === false
+  // Chaîne à 3 niveaux : mineur -> fondeur -> forgeron. Au démarrage, seul le
+  // mineur (et bûcheron) est libre ; fondeur ET forgeron sont verrouillés.
+  record('T2.1', forgeronLocked && fondeurLocked && mineurUnlocked,
+    `forgeron verrouillé=${forgeronLocked}, fondeur verrouillé=${fondeurLocked}, mineur débloqué=${mineurUnlocked}`)
+
+  // === Recette 0 : mineur_tresors_terre (8 étapes, prerequis du fondeur) ====
+  // Le fondeur nécessite maintenant le mineur (chaîne causale 3 niveaux).
+  await page.click('text=Les Trésors de la Terre')
+  await page.waitForSelector('[data-testid="scene"]', { timeout: 45000 })
+  await page.waitForTimeout(1000)
+  async function dragMineur(s, t) {
+    const src = page.locator(`[data-dnd-draggable="${s}"]`)
+    const tgt = page.locator(`[data-dnd-dropzone="${t}"]`)
+    const sb = await src.boundingBox(), tb = await tgt.boundingBox()
+    await page.mouse.move(sb.x+sb.width/2, sb.y+sb.height/2); await page.mouse.down()
+    await page.mouse.move(sb.x+sb.width/2+8, sb.y+sb.height/2+8, { steps: 5 })
+    await page.mouse.move(tb.x+tb.width/2, tb.y+tb.height/2, { steps: 25 }); await page.mouse.up()
+    await page.waitForTimeout(800)
+  }
+  await dragMineur('lanterne', 'lanterne_crochet')
+  await dragMineur('pic', 'veine_charbon')
+  await dragMineur('charbon', 'chariot_zone')
+  await dragMineur('pic', 'veine_minerai')
+  await dragMineur('minerai_fer', 'chariot_zone')
+  await dragMineur('pic', 'veine_or')
+  await dragMineur('pepite_or', 'poche_avatar')
+  await dragMineur('chariot_charge', 'sortie_galerie')
+  const mineurDone = await page.locator('[data-testid="scene-done"]').count()
+  record('T6.0', mineurDone > 0, `mineur terminé=${mineurDone > 0}`)
+  await page.click('text=← Retour aux recettes')
+  await page.waitForTimeout(500)
 
   // === Recette 1 : fondeur_naissance_acier (4 étapes) =====================
   await page.click('text=La Naissance de l\'Acier')
   await page.waitForSelector('[data-testid="scene"]', { timeout: 45000 })
+  await page.waitForTimeout(1000)
 
-  // T3.1 : fond enluminure présent (même logique que T3.2).
+  // T3.1 : fond enluminure présent.
   const hasBg = await page.locator('[data-testid="scene"]').evaluate((el) => {
     const img = el.querySelector('img')
     if (img) return true
