@@ -306,9 +306,13 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
   const effects = deriveEffects(validatedSteps)
   const effectLayouts = {}
   for (const el of scenario.elements || []) {
-    effectLayouts[el.id] = hasV2Layout
-      ? layoutV2.dropzones[el.id]
-      : posOf(el.id)
+    if (hasV2Layout) {
+      const dz = layoutV2.dropzones[el.id]
+      // SceneEffects attend { left, top, w } ; sceneLayouts utilise { left, top, width, height }.
+      effectLayouts[el.id] = dz ? { left: dz.left, top: dz.top, w: dz.width } : undefined
+    } else {
+      effectLayouts[el.id] = posOf(el.id)
+    }
   }
 
   const activeEl = (scenario.elements || []).find((e) => e.id === activeId)
