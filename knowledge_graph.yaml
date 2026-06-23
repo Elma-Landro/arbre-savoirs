@@ -193,7 +193,7 @@ recipes:
     titre: "La Naissance de l'Acier"
     metier: "Fondeur"
     ordre: 1
-    prerequis: null
+    prerequis: "mineur_tresors_terre"
     ingredients:
       - id: minerai_fer
         quantite: 1
