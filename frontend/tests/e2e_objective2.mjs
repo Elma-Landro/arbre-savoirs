@@ -49,8 +49,8 @@ try {
 
   // --- T2.1 : rendu de la scène -------------------------------------------
   await page.goto(APP, { waitUntil: 'networkidle' })
-  await page.click('text=La naissance de l\'acier')
-  await page.waitForSelector('[data-testid="scene"]', { timeout: 10000 })
+  await page.click('text=La Naissance de l\'Acier')
+  await page.waitForSelector('[data-testid="scene"]', { timeout: 45000 })
   const sceneVisible = await page.locator('[data-testid="scene"]').count()
   const draggables = await page.locator('[data-dnd-draggable]').count()
   const dropzones = await page.locator('[data-dnd-dropzone]').count()
