@@ -71,3 +71,26 @@ body {
   60% { transform: scale(1.2) rotate(4deg); opacity: 1; }
   100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
+
+/* --- Mineur : lumière bougie de la lanterne accrochée --------------------- */
+/* Ondulation douce de la teinte chaude (effet flamme de bougie). */
+@keyframes lantern-flicker {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  25%      { opacity: 1;    transform: scale(1.04); }
+  50%      { opacity: 0.78; transform: scale(0.98); }
+  75%      { opacity: 0.95; transform: scale(1.02); }
+}
+.enl-lantern-glow {
+  border-radius: 50%;
+  /* Lueur chaude bougie : or -> ambre -> transparent. Le radial-gradient crée
+     un halo qui illumine la galerie sombre autour du crochet. */
+  background: radial-gradient(
+    circle,
+    rgba(255, 220, 130, 0.65) 0%,
+    rgba(245, 190, 60, 0.45) 25%,
+    rgba(212, 160, 23, 0.25) 50%,
+    transparent 75%
+  );
+  animation: lantern-flicker 2.5s ease-in-out infinite;
+  filter: blur(8px);
+}

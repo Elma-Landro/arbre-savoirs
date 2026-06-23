@@ -15,6 +15,8 @@
 const FIRE_RE = /(four|feu|forge)/i
 const ANVIL_RE = /enclume/i
 const METAL_RE = /(lingot|minerai|metal)/i
+const LANTERN_RE = /lanterne/i
+const LANTERN_HOOK_RE = /crochet|lanterne_zone|lanterne_crochet/i
 
 /**
  * Dérive la liste des effets actifs à partir des étapes déjà validées.
@@ -37,6 +39,8 @@ export function deriveEffects(validatedSteps = []) {
     if (FIRE_RE.test(tgt)) push('flames', tgt)
     if (ANVIL_RE.test(tgt)) push('sparks', tgt)
     if (METAL_RE.test(src) && FIRE_RE.test(tgt)) push('glow', src)
+    // Lanterne accrochée -> lumière bougie sur le crochet + galerie éclairée.
+    if (LANTERN_RE.test(src)) push('lantern', tgt)
   }
   return out
 }
@@ -119,6 +123,24 @@ function Glow({ x, y, w }) {
   )
 }
 
+function Lantern({ x, y, w }) {
+  // Lumière bougie : halo doré ondulant (teinte chaude) sur le crochet +
+  // lueur large qui illumine la galerie. keyframe 'lantern-flicker' dans index.css.
+  return (
+    <>
+      {/* Lueur large (illumine la galerie entière) */}
+      <div
+        data-testid="effect-lantern"
+        className="pointer-events-none absolute enl-lantern-glow"
+        style={{
+          left: x, top: y, width: w, height: w,
+        }}
+        aria-hidden="true"
+      />
+    </>
+  )
+}
+
 /**
  * @param {Object} props
  * @param {Array}  props.validatedSteps - étapes réussies (pour dérivation)
@@ -132,6 +154,7 @@ export default function SceneEffects({ validatedSteps, layouts = {} }) {
     if (kind === 'flames') return <Flames key={`${kind}-${anchorId}`} x={pos.left} y={pos.top} w={pos.w} />
     if (kind === 'sparks') return <Sparks key={`${kind}-${anchorId}`} x={pos.left} y={pos.top} w={pos.w} />
     if (kind === 'glow') return <Glow key={`${kind}-${anchorId}`} x={pos.left} y={pos.top} w={pos.w} />
+    if (kind === 'lantern') return <Lantern key={`${kind}-${anchorId}`} x={pos.left} y={pos.top} w={pos.w} />
     return null
   })
 }
