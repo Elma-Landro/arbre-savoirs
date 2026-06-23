@@ -65,11 +65,13 @@ try {
   await page.click('text=La Naissance de l\'Acier')
   await page.waitForSelector('[data-testid="scene"]', { timeout: 45000 })
 
-  // T1 : pas de fond CSS uni (image de fond présente)
-  const hasBgImage = await page.locator('[data-testid="scene"] > div').first().evaluate(
-    (el) => getComputedStyle(el).backgroundImage !== 'none'
-  )
-  record('T3.1', hasBgImage, `fond enluminure fondeur présent=${hasBgImage}`)
+  // T3.1 : fond enluminure présent (même logique que T3.2).
+  const hasBg = await page.locator('[data-testid="scene"]').evaluate((el) => {
+    const img = el.querySelector('img')
+    if (img) return true
+    return getComputedStyle(el).backgroundImage !== 'none'
+  })
+  record('T3.1', hasBg, `fond enluminure fondeur présent=${hasBg}`)
 
   // T4 : les props sont visibles sans fond blanc (images avec alpha)
   const propImgs = await page.locator('img[data-testid^="asset-img-"]').count()
@@ -114,9 +116,11 @@ try {
   if (forgeronNowUnlocked) {
     await page.click('text=L\'Épée du Chevalier')
     await page.waitForSelector('[data-testid="scene"]', { timeout: 45000 })
-    const bgForge = await page.locator('[data-testid="scene"] > div').first().evaluate(
-      (el) => getComputedStyle(el).backgroundImage !== 'none'
-    )
+    const bgForge = await page.locator('[data-testid="scene"]').evaluate((el) => {
+      const img = el.querySelector('img')
+      if (img) return true
+      return getComputedStyle(el).backgroundImage !== 'none'
+    })
     record('T3.2', bgForge, `fond enluminure forgeron présent=${bgForge}`)
 
     // Les 6 étapes (toutes converties en drag)

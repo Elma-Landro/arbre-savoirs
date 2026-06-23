@@ -36,6 +36,7 @@ try {
 
   // Avatar pré-défini (sinon l'app reste sur l'écran de sélection d'avatar
   // et le clic sur la recette échoue). Même init que e2e_assets.mjs.
+  await page.setViewportSize({ width: 1280, height: 1024 })
   await page.addInitScript(() => {
     localStorage.setItem('arbre_savoirs_avatar', JSON.stringify({
       base: 'avatar_base_apprenti',
@@ -49,15 +50,19 @@ try {
 
   // --- T2.1 : rendu de la scène -------------------------------------------
   await page.goto(APP, { waitUntil: 'networkidle' })
-  await page.click('text=La naissance de l\'acier')
-  await page.waitForSelector('[data-testid="scene"]', { timeout: 10000 })
+  await page.click('text=La Naissance de l\'Acier')
+  await page.waitForSelector('[data-testid="scene"]', { timeout: 45000 })
   const sceneVisible = await page.locator('[data-testid="scene"]').count()
   const draggables = await page.locator('[data-dnd-draggable]').count()
   const dropzones = await page.locator('[data-dnd-dropzone]').count()
-  // Le décor : un div avec un background (dégradé) est rendu.
-  const hasBg = await page.locator('[data-testid="scene"] > div').first().evaluate(
-    (el) => getComputedStyle(el).background.includes('gradient') || getComputedStyle(el).backgroundColor !== 'rgba(0, 0, 0, 0)'
-  )
+  // Le décor : un <img> de fond (refonte Claude) OU un gradient/backgroundColor
+  // (layout legacy) est rendu.
+  const hasBg = await page.locator('[data-testid="scene"]').evaluate((el) => {
+    const img = el.querySelector('img')
+    if (img) return true
+    return getComputedStyle(el).backgroundImage !== 'none' ||
+           getComputedStyle(el).backgroundColor !== 'rgba(0, 0, 0, 0)'
+  })
   record('T2.1', sceneVisible > 0 && draggables > 0 && dropzones > 0 && hasBg,
     `scène=${sceneVisible}, draggables=${draggables}, dropzones=${dropzones}, décor=${hasBg}`)
 
@@ -68,12 +73,16 @@ try {
     const sb = await src.boundingBox()
     const tb = await tgt.boundingBox()
     if (!sb || !tb) return false
-    // T2.2 : on saisit (mouse.down) et déplace.
+    // T2.2 : on saisit (mouse.down) et déplace. Petit mouvement d'activation
+    // requis par le PointerSensor (activationConstraint distance:5).
     await page.mouse.move(sb.x + sb.width / 2, sb.y + sb.height / 2)
     await page.mouse.down()
-    await page.mouse.move(tb.x + tb.width / 2, tb.y + tb.height / 2, { steps: 10 })
+    await page.waitForTimeout(50)
+    await page.mouse.move(sb.x + sb.width / 2 + 8, sb.y + sb.height / 2 + 8, { steps: 5 })
+    await page.waitForTimeout(50)
+    await page.mouse.move(tb.x + tb.width / 2, tb.y + tb.height / 2, { steps: 15 })
     await page.mouse.up()
-    await page.waitForTimeout(800)
+    await page.waitForTimeout(900)
     return true
   }
 

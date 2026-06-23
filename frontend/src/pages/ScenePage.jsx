@@ -127,9 +127,13 @@ export default function ScenePage({ recipe, childName, avatarConfig, onCompleted
             scenario={fullRecipe.scenario}
             childName={childName}
             avatarConfig={avatarConfig}
+            resultId={fullRecipe.resultat?.[0]?.id}
             onInstruction={(text) => speak(text)}
             onSuccess={(text) => speak(text)}
-            onComplete={() => onCompleted(fullRecipe.id)}
+            onComplete={() => onCompleted(
+              fullRecipe.id,
+              (fullRecipe.resultat || []).map((r) => r.id),
+            )}
           />
           <p className="text-xs text-stone-400 mt-3 text-center">
             {narrating

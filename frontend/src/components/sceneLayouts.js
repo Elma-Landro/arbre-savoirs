@@ -8,6 +8,8 @@ const sceneLayouts = {
     dropzones: {
       four_haut_fourneau: { top: '28%', left: '28%', width: '22%', height: '38%' },
       moule_lingot:       { top: '62%', left: '62%', width: '20%', height: '16%' },
+      // zone_livraison : table où l'enfant dépose le lingot refroidi (étape 4).
+      zone_livraison:     { top: '62%', left: '82%', width: '14%', height: '20%' },
     },
   },
   forgeron_epee: {
@@ -17,6 +19,8 @@ const sceneLayouts = {
       avatar_zone: { top: '20%', left: '8%',  width: '18%', height: '55%' },
       metal_chaud: { top: '48%', left: '42%', width: '18%', height: '22%' },
       seau_eau:    { top: '57%', left: '65%', width: '14%', height: '22%' },
+      // enclume : surface de frappe (étape 5, marteau -> enclume).
+      enclume:     { top: '56%', left: '48%', width: '16%', height: '20%' },
     },
   },
 }

@@ -108,6 +108,8 @@ def get_recipes():
             "description_pedagogique": r.get("description_pedagogique", ""),
             "ingredients": ingredients,
             "resultat": results,
+            # Node ids des résultats (pour l'inventaire / chaîne causale Patch 6b).
+            "resultat_ids": [x["id"] for x in r["resultat"]],
             # Chaîne causale v2.0 : recette à compléter avant celle-ci (null = libre).
             "prerequis": r.get("prerequis"),
         })

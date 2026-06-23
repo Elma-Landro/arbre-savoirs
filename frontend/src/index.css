@@ -64,3 +64,10 @@ body {
     @apply rounded-3xl bg-white/90 p-5 shadow-lg border-2 border-amber-100;
   }
 }
+
+/* --- Patch 7 : révélation de l'objet final (ResultReveal) ----------------- */
+@keyframes resultPop {
+  0% { transform: scale(0) rotate(-12deg); opacity: 0; }
+  60% { transform: scale(1.2) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
