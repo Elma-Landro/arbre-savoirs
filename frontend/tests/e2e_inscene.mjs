@@ -51,7 +51,7 @@ try {
 
   // --- T1.1 : scène "in-situ", pas d'inventaire séparé ---------------------
   await page.goto(APP, { waitUntil: 'networkidle' })
-  await page.click('text=Le souffle du forgeron')
+  await page.click('text=La Naissance de l\'Acier')
   await page.waitForSelector('[data-testid="scene"]', { timeout: 45000 })
 
   // Pas de grille d'inventaire dédiée (aucun élément avec cet testid).
@@ -72,13 +72,10 @@ try {
     `inventory-grid=${inventoryGrid}, layout-absolu=${hasAbsoluteLayout}`)
 
   // --- T1.2 : dépôt minerai -> four déclenche un calque de flammes ---------
-  //   recette_forge étape 3 : lingot -> feu_forge. On avance jusqu'à l'étape 3.
-  //   (étapes 1-2 = tablier/gants -> zone_preparation, pas d'effet feu.)
-  await doDrag(page, 'tablier', 'zone_preparation')
-  await doDrag(page, 'gants', 'zone_preparation')
-  // Avant le dépôt dans le feu : pas de calque flames.
+  //   fondeur_naissance_acier étape 1 : minerai_fer -> four_haut_fourneau.
+  //   Le calque flames est déclenché quand un métal est déposé dans un four.
   const flamesBefore = await page.locator('[data-testid="effect-flames"]').count()
-  await doDrag(page, 'lingot', 'feu_forge')
+  await doDrag(page, 'minerai_fer', 'four_haut_fourneau')
   // Le calque flames doit apparaître rapidement (<= 500ms).
   let flamesAfter = 0
   for (let i = 0; i < 10; i++) {
@@ -87,37 +84,26 @@ try {
     await page.waitForTimeout(50)
   }
   record('T1.2', flamesBefore === 0 && flamesAfter > 0,
-    `flammes avant=${flamesBefore}, après dépôt feu=${flamesAfter}`)
+    `flammes avant=${flamesBefore}, après dépôt four=${flamesAfter}`)
 
-  // --- T1.3 : mauvais dépôt -> shake (animate-wiggle), pas de message texte -
-  //   Étape 4 : lingot -> enclume. On tente lingot -> feu_forge (déjà fait) ou
-  //   plutôt marteau -> enclume prématuré. Plus simple : on revient et on teste
-  //   une recette où on peut faire un mauvais drop. Ici on est à l'étape 4
-  //   (lingot->enclume). On tente marteau->enclume (mauvaise source) :
-  //   la source attendue est lingot, marteau est disabled donc non saisissable.
-  //   On tente plutôt lingot->feu_forge (mauvaise cible à l'étape 4).
+  // --- T1.3 : mauvais dépôt -> pas d'avance, pas de message texte ----------
+  //   Étape 2 : charbon -> four_haut_fourneau. On tente charbon -> zone_livraison
+  //   (mauvaise cible) : doit échouer sans message texte.
   const stepText = () => page.locator('span:has-text("Étape")').innerText()
   const beforeStep = await stepText()
-  await doDrag(page, 'lingot', 'feu_forge') // mauvaise cible à l'étape 4
-  // Un élément en secousse (animate-wiggle) doit être présent brièvement.
-  // Comme le wiggle dure 700ms et qu'on attend 700ms dans doDrag, il peut être
-  // déjà parti ; on vérifie plutôt que l'étape N'A PAS avancé (pas de message
-  // d'erreur texte, pas de blocage) et qu'aucun message d'erreur n'est apparu.
+  await doDrag(page, 'charbon', 'zone_livraison') // mauvaise cible à l'étape 2
   const afterStep = await stepText()
   const errorMsg = await page.locator('text=/erreur|incorrect|essaie encore/i').count()
   record('T1.3', beforeStep === afterStep && errorMsg === 0,
     `étape ${beforeStep} inchangée=${beforeStep === afterStep}, msg-erreur=${errorMsg}`)
 
-  // --- T1.4 : parcourir les étapes restantes -> transformations visibles ----
-  //   On termine la recette (étapes 4-5) et on vérifie qu'à chaque étape un
-  //   changement d'état visible se produit (calque d'effet OU avancement de
-  //   l'indicateur d'étape).
-  await doDrag(page, 'lingot', 'enclume')   // étape 4 OK -> étincelles (effect-sparks)
-  const sparksAfterAnvil = await page.locator('[data-testid="effect-sparks"]').count()
-  await doDrag(page, 'marteau', 'enclume')  // étape 5 OK -> scène terminée
+  // --- T1.4 : parcourir les étapes restantes -> scène terminée --------------
+  //   On termine la recette (étapes 2-4).
+  await doDrag(page, 'charbon', 'four_haut_fourneau')   // étape 2 OK
+  await doDrag(page, 'acier_liquide', 'moule_lingot')   // étape 3 OK
+  await doDrag(page, 'lingot_refroidi', 'zone_livraison') // étape 4 OK -> terminé
   const done = await page.locator('[data-testid="scene-done"]').count()
-  record('T1.4', sparksAfterAnvil > 0 && done > 0,
-    `étincelles après enclume=${sparksAfterAnvil}, scène terminée=${done > 0}`)
+  record('T1.4', done > 0, `scène fondeur terminée=${done > 0}`)
 } catch (e) {
   record('ERR', false, `erreur inattendue : ${e.message}`)
 } finally {

@@ -108,6 +108,8 @@ def get_recipes():
             "description_pedagogique": r.get("description_pedagogique", ""),
             "ingredients": ingredients,
             "resultat": results,
+            # Chaîne causale v2.0 : recette à compléter avant celle-ci (null = libre).
+            "prerequis": r.get("prerequis"),
         })
     return out
 

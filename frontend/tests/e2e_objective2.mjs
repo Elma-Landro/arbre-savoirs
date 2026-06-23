@@ -79,26 +79,26 @@ try {
 
   // --- T2.2 : un draggable est saisi et déplacé (vérifié par le fait que
   //     le drag aboutit à un événement ; on le confirme indirectement via T2.3).
-  //     Étape 1 actuelle de recette_fonte : tablier -> zone_preparation.
-  const grabbed = await doDrag('tablier', 'zone_preparation')
+  //     fondeur_naissance_acier (chaîne acier v2.0) : 4 étapes.
+  //     Étape 1 : minerai_fer -> four_haut_fourneau.
+  const grabbed = await doDrag('minerai_fer', 'four_haut_fourneau')
   record('T2.2', grabbed, grabbed ? 'Draggable saisi et déplacé (mouse down→move→up).' : 'Impossible de saisir.')
 
-  // --- T2.3 : après le bon dépôt (tablier -> zone_preparation), étape 2/5.
-  const onStep2 = await page.locator('text=Étape 2 / 5').count()
+  // --- T2.3 : après le bon dépôt (minerai -> four), étape 2/4.
+  const onStep2 = await page.locator('text=Étape 2 / 4').count()
   record('T2.3', onStep2 > 0, onStep2 > 0 ? 'Bon dépôt -> étape 2.' : 'Resté à l\'étape 1.')
 
   // --- T2.4 : mauvaise target -> pas d'avance.
-  //     Sur l'étape 2, source attendue = gants, target = zone_preparation.
-  //     On tente gants -> moule (mauvaise cible) : doit échouer.
-  await doDrag('gants', 'moule')
-  const stillStep2 = await page.locator('text=Étape 2 / 5').count()
+  //     Sur l'étape 2, source attendue = charbon, target = four_haut_fourneau.
+  //     On tente charbon -> zone_livraison (mauvaise cible) : doit échouer.
+  await doDrag('charbon', 'zone_livraison')
+  const stillStep2 = await page.locator('text=Étape 2 / 4').count()
   record('T2.4', stillStep2 > 0, stillStep2 > 0 ? 'Mauvaise target rejetée, reste à l\'étape 2.' : 'A avancé par erreur.')
 
-  // --- on termine proprement les étapes restantes (2->5) pour vérifier T3.3.
-  await doDrag('gants', 'zone_preparation')   // étape 2 OK
-  await doDrag('minerai', 'four')             // étape 3 OK
-  await doDrag('charbon_elt', 'four')         // étape 4 OK
-  await doDrag('metal_liquide', 'moule')      // étape 5 OK
+  // --- on termine proprement les étapes restantes (2->4) pour vérifier T3.3.
+  await doDrag('charbon', 'four_haut_fourneau')   // étape 2 OK
+  await doDrag('acier_liquide', 'moule_lingot')   // étape 3 OK
+  await doDrag('lingot_refroidi', 'zone_livraison') // étape 4 OK
   const done = await page.locator('[data-testid="scene-done"]').count()
   record('T2.3b', done > 0, done > 0 ? 'Scène terminée (Bravo).' : 'Scène non terminée.')
 

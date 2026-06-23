@@ -39,11 +39,18 @@ export default {
           '0%': { opacity: 0 },
           '100%': { opacity: 1 },
         },
+        // Flash doré + scale au dépôt correct (brief O4.4).
+        'drop-success': {
+          '0%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(212,160,23,0)' },
+          '40%': { transform: 'scale(1.15)', boxShadow: '0 0 0 12px rgba(212,160,23,0.6)' },
+          '100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(212,160,23,0)' },
+        },
       },
       animation: {
         'pulse-gold': 'pulse-gold 2s ease-in-out infinite',
         'flame-flicker': 'flame-flicker 0.8s ease-in-out infinite',
         'effect-fade-in': 'effect-fade-in 0.3s ease-out',
+        'drop-success': 'drop-success 0.6s ease-out',
       },
     },
   },

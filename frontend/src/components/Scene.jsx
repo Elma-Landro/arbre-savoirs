@@ -35,6 +35,9 @@ const IMAGE_BACKGROUNDS = {
   foret_bucheron: '/assets/zones/bg_foret_bucheron.svg',
   atelier_forgeron: '/assets/zones/bg_forge_enluminure.png',
   atelier_fonderie: '/assets/zones/bg_forge_enluminure.png',
+  // Chaîne acier v2.0 : fonds dédiés par recette.
+  fondeur_bg_atelier: '/assets/chaine_acier/fondeur_bg_atelier.png',
+  forgeron_bg_atelier: '/assets/chaine_acier/forgeron_bg_atelier.png',
 }
 
 // --- Registre de layout O1 ------------------------------------------------
@@ -63,6 +66,23 @@ const SCENE_LAYOUTS = {
     // gants) vont en zone de staging pour éviter le chevauchement avec les
     // dropzones fixes. Seuls les éléments "both" (draggable+dropzone) restent
     // à position dédiée car ils sont aussi des pièces du décor.
+  },
+  // --- Chaîne acier v2.0 : positions dérivées de l'analyse visuelle des
+  //     fonds fondeur_bg_atelier.png / forgeron_bg_atelier.png.
+  //     fondeur : four à gauche, moule/établi centre-droite, table basse devant.
+  fondeur_bg_atelier: {
+    four_haut_fourneau: { left: '8%',  top: '40%', w: '22%' }, // gueule du four (dépot minerai+charbon)
+    moule_lingot:       { left: '40%', top: '52%', w: '18%' }, // moule sur l'établi (dépot acier liquide)
+    zone_livraison:     { left: '66%', top: '60%', w: '20%' }, // table où on pose le lingot refroidi
+  },
+  //     forgeron : forge en pierre à gauche, enclume centre, seau centre-droite,
+  //     avatar/personnage à droite.
+  forgeron_bg_atelier: {
+    forge_feu:   { left: '6%',  top: '40%', w: '22%' }, // foyer en pierre (chauffe lingot)
+    enclume:     { left: '34%', top: '54%', w: '18%' }, // enclume (frappe marteau)
+    seau_eau:    { left: '52%', top: '58%', w: '16%' }, // seau de trempe
+    avatar_zone: { left: '68%', top: '30%', w: '24%' }, // personnage (tablier+gants)
+    metal_chaud: { left: '36%', top: '40%', w: '16%' }, // zone métal chaud (tenailles)
   },
   foret: {
     billot:           { left: '10%', top: '54%', w: '22%' },
@@ -126,7 +146,7 @@ function Draggable({ id, emoji, asset, label, disabled, wrong }) {
   )
 }
 
-function Dropzone({ id, emoji, asset, label, highlight, wrong, children }) {
+function Dropzone({ id, emoji, asset, label, highlight, wrong, successFlash, children }) {
   const { setNodeRef, isOver } = useDroppable({ id })
   // Token 'ring-amber' conservé : e2e_objective5:37 détecte la cible attendue
   // via className.includes('ring-amber'). On garde ce token ET on ajoute le
@@ -135,12 +155,14 @@ function Dropzone({ id, emoji, asset, label, highlight, wrong, children }) {
   // Au survol d'un objet compatible : halo vermillon + intensification.
   const over = isOver ? 'ring-4 ring-enl-vermillon scale-105' : ''
   const bad = wrong ? 'ring-4 ring-red-400 animate-wiggle' : ''
+  // Brief O4.4 : flash doré + scale 1.15 au dépôt correct (600ms).
+  const flash = successFlash ? 'animate-drop-success' : ''
   return (
     <div
       ref={setNodeRef}
       data-testid={`elt-${id}`}
       data-dnd-dropzone={id}
-      className={`relative flex flex-col items-center justify-center rounded-2xl bg-enl-ivoire/40 border-2 border-enl-or/60 p-2 shadow-lg transition ${ring} ${over} ${bad}`}
+      className={`relative flex flex-col items-center justify-center rounded-2xl bg-enl-ivoire/40 border-2 border-enl-or/60 p-2 shadow-lg transition ${ring} ${over} ${bad} ${flash}`}
     >
       {children ? (
         children
@@ -194,6 +216,8 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
   const [done, setDone] = useState(false)
   // DragOverlay : id de l'élément en cours de glissement (pour le ghost).
   const [activeId, setActiveId] = useState(null)
+  // Brief O4.4 : dropzone qui vient de recevoir un dépôt correct (flash doré).
+  const [successTargetId, setSuccessTargetId] = useState(null)
   const sensor = useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
 
   const step = scenario.steps[stepIdx]
@@ -240,6 +264,9 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
     if (src === expectedSource && tgt === expectedTarget) {
       // T2.3 — succès : on lit le success_tts, puis on passe à l'étape suivante.
       setWrongId(null)
+      // Brief O4.4 : flash doré + scale sur la dropzone cible pendant 600ms.
+      setSuccessTargetId(tgt)
+      setTimeout(() => setSuccessTargetId(null), 600)
       onSuccess?.(step.success_tts)
       if (stepIdx + 1 >= total) {
         setDone(true)
@@ -331,7 +358,8 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
               if (el.type === 'both') {
                 return (
                   <Dropzone id={el.id} emoji={el.emoji} asset={el.asset} label={el.label}
-                            highlight={el.id === expectedTarget} wrong={isWrongTgt}>
+                            highlight={el.id === expectedTarget} wrong={isWrongTgt}
+                            successFlash={el.id === successTargetId}>
                     <DraggableInner id={el.id} emoji={el.emoji} asset={el.asset}
                                     disabled={el.id !== expectedSource} wrong={isWrongSrc} />
                   </Dropzone>
@@ -346,7 +374,8 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
               if (el.type === 'dropzone') {
                 return (
                   <Dropzone id={el.id} emoji={el.emoji} asset={el.asset} label={el.label}
-                            highlight={el.id === expectedTarget} wrong={isWrongTgt} />
+                            highlight={el.id === expectedTarget} wrong={isWrongTgt}
+                            successFlash={el.id === successTargetId} />
                 )
               }
               return <StaticElt id={el.id} emoji={el.emoji} asset={el.asset} label={el.label} />
