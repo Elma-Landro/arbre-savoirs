@@ -118,6 +118,24 @@ export default function RecipeList({ progress, onOpen }) {
                   </span>
                 </div>
               )}
+
+              {/* Badge inventaire (Patch 6b) : objet gagné transmis d'une recette
+                  précédente. Rend visible la chaîne causale (ex : lingot du
+                  fondeur disponible pour le forgeron). */}
+              {unlocked && r.prerequis && (() => {
+                // Node id du résultat de la recette prerequis (chaîne causale).
+                const prereqRecipe = recipes.find((x) => x.id === r.prerequis)
+                const producedNode = prereqRecipe?.resultat_ids?.[0]
+                if (producedNode && progress.hasItem(producedNode)) {
+                  return (
+                    <div className="absolute right-2 top-2 z-10 flex items-center gap-1 rounded-full bg-enl-or/90 px-3 py-1 text-xs font-bold text-enl-encre shadow-lg">
+                      <span aria-hidden="true">🧱</span>
+                      Objet acquis !
+                    </div>
+                  )
+                }
+                return null
+              })()}
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-start gap-3">
                   {iconAsset && (

@@ -297,3 +297,77 @@ sont libres au démarrage.
 `recette_fonte`/`recette_forge` n'existent plus. Adaptation de 4 tests qui les
 référaient (`e2e_objective2`, `e2e_assets`, `e2e_inscene`,
 `test_preload_scene_audio`) aux nouveaux IDs et nouvelles étapes.
+
+---
+
+# Patches refonte UX 4/6b/7 (2026-06-23) — Bulle guide, révélation, inventaire
+
+Suite du brief "Refonte UX/Visuelle Itérative". Application des 3 patches
+restants (4/6b/7) — les patches 1/2/3 étaient déjà faits lors des commits
+`efee0fc` (refonte O1) et `974451f` (chaîne v2.0).
+
+## Patch 4 — GuideBubble — PASS
+
+Remplace la carte blanche d'instruction (`div.card` Web app) par une bulle guide
+chaleureuse style enluminure.
+
+- Nouveau `frontend/src/components/GuideBubble.jsx` : bulle ivoire semi-opaque,
+  médaillon rond or avec icône 🗣️, police font-story gros, bordure or.
+- `data-testid="instruction"` préservé (tests E2E + accessibilité `aria-live`).
+- Scene.jsx : la `div.card` instruction → `<GuideBubble>`.
+
+**Capture** `patch4_guidebubble.png` : bulle chaleureuse confirmée par analyse
+visuelle (fond ivoire, médaillon, texte lisible, bordure or).
+
+## Patch 7 — ResultReveal — PASS
+
+Remplace le `🎉 Bravo {childName} !` texte seul par une révélation animée de
+l'objet créé (lingot/épée/planche/charrette selon la recette).
+
+- Nouveau `frontend/src/components/ResultReveal.jsx` : fond outremer étoilé d'or,
+  halo or pulsant, objet révélé au centre (animation `resultPop` scale
+  0→1.2→1), message de félicitations avec prénom + nom de l'objet.
+- Mapping node résultat → asset (`lingot_acier`→`v2_result_lingot_acier`,
+  `epee_forgee`→`v2_result_epee`) + fallback emoji pour bûcheron/charron.
+- `data-testid="scene-done"` préservé sur la racine.
+- Nouvelle keyframe `resultPop` dans `index.css`.
+- Scene.jsx : signature accepte `resultId`, bloc `done` → `<ResultReveal>`.
+- ScenePage.jsx : passe `resultId={fullRecipe.resultat[0].id}`.
+
+**Capture** `patch7_resultreveal.png` : fond étoilé + lingot révélé confirmés.
+
+## Patch 6b — Inventaire lingot (chaîne causale visible) — PASS
+
+Le lingot produit par le fondeur est désormais visible dans l'inventaire et
+signalé sur la carte forgeron.
+
+- `useProgress.js` : nouveau `inventory: {}` dans le state. `markCompleted`
+  accepte `(recipeId, resultIds)` et peuple l'inventaire. Nouveaux accesseurs
+  `inventoryIds` / `hasItem(nodeId)`.
+- `ScenePage.jsx` : passe les node ids des résultats à `onCompleted`.
+- `backend/main.py` : `/api/recipes` expose `resultat_ids` (node ids, pas
+  labels) pour que le frontend puisse matcher l'inventaire.
+- `RecipeList.jsx` : badge "🧱 Objet acquis !" sur la carte forgeron quand
+  `lingot_acier` est dans l'inventaire (chaîne causale rendue visible).
+
+**Capture** `patch6b_badge.png` : badge or "Objet acquis !" confirmé sur la
+carte forgeron après completion du fondeur.
+
+## Tests — tous PASS
+
+| Test | Résultat |
+|---|---|
+| `e2e_objective2` (moteur DnD + GuideBubble + ResultReveal) | **9/9 PASS** |
+| `e2e_assets` | **PASS** |
+| `e2e_inscene` | **4/4 PASS** |
+| `e2e_chaine_acier` | **10/10 PASS** |
+| `test_objective1_graph` | **3/3 PASS** |
+| `test_preload_scene_audio` | **PASS** |
+| `vite build` | OK (89 KB JS gzippé) |
+
+## Invariants préservés
+
+- `data-testid="instruction"` sur GuideBubble (tests E2E).
+- `data-testid="scene-done"` sur ResultReveal (tests E2E).
+- `useProgress` rétrocompatible (ancien state sans `inventory` → `{}` par défaut).
+- `markCompleted(recipeId)` sans 2e arg fonctionne encore (resultIds=[]).

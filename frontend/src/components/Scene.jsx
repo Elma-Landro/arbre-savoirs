@@ -22,6 +22,8 @@ import {
 import GameAsset from './GameAsset'
 import AvatarPreview from './AvatarPreview'
 import SceneEffects, { deriveEffects } from './SceneEffects'
+import GuideBubble from './GuideBubble'
+import ResultReveal from './ResultReveal'
 
 // Dégradés CSS de fallback (Règle 3 : pas de beaux assets pour les bgs inconnus).
 const BACKGROUNDS = {
@@ -210,7 +212,7 @@ function StaticElt({ id, emoji, asset, label }) {
   )
 }
 
-export default function Scene({ scenario, childName, avatarConfig, onComplete, onInstruction, onSuccess }) {
+export default function Scene({ scenario, childName, avatarConfig, resultId, onComplete, onInstruction, onSuccess }) {
   const [stepIdx, setStepIdx] = useState(0)
   const [wrongId, setWrongId] = useState(null) // id d'élément en secousse (T2.4)
   const [done, setDone] = useState(false)
@@ -293,13 +295,7 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
   const activeEl = (scenario.elements || []).find((e) => e.id === activeId)
 
   if (done) {
-    return (
-      <div data-testid="scene-done" className="card text-center">
-        <p className="text-4xl mb-2">🎉</p>
-        <p className="text-2xl font-bold text-enl-malachite">Bravo {childName} !</p>
-        <p className="text-stone-600">Tu as terminé cette aventure !</p>
-      </div>
-    )
+    return <ResultReveal childName={childName} resultId={resultId} />
   }
 
   return (
@@ -329,10 +325,8 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
           </span>
         </div>
 
-        {/* Consigne (instruction_tts) affichée aussi à l'écran */}
-        <div data-testid="instruction" className="card mb-4 py-3 relative z-20">
-          <p className="text-lg font-story text-stone-800">🎵 {step.instruction_tts}</p>
-        </div>
+        {/* Bulle guide enfant (remplace l'ancienne carte blanche d'instruction). */}
+        <GuideBubble text={step.instruction_tts} />
 
         {/* Calques d'effet (flammes/étincelles/lueur) sous les éléments */}
         <SceneEffects validatedSteps={validatedSteps} layouts={effectLayouts} />
