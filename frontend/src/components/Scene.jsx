@@ -1,11 +1,10 @@
 // Scene.jsx — Scène interactive "in-situ" (Refonte UX Objectif 1).
 //
-// Refonte Bayam-style : les objets vivent DANS le décor à des emplacements
-// naturels (le charbon près du four, le minerai sur l'établi), et non plus
-// dans une rangée flex-wrap centrée. Les dropzones sont des éléments du décor
-// (gueule du four, enclume) avec un halo or pulsant. Chaque dépôt correct
-// déclenche une transformation visuelle (flammes, étincelles, lueur) via les
-// calques <SceneEffects>.
+// Architecture Sacha/Bayam (v2) :
+//   • Zone de jeu 16:9 avec fond peint en <img> (ratio strict).
+//   • Recettes v2 (recipeId dans sceneLayouts) : dropzones invisibles alignées
+//     sur le décor peint (HotspotDropzone), props dans le rail inventaire bas.
+//   • Recettes legacy : sprite-based layout conservé (aucune régression).
 //
 // Invariants moteur préservés (zéro régression — cf. e2e_objective2/5/assets) :
 //   - testids DOM : scene, scene-done, instruction, elt-${el.id}, asset-img-*
@@ -22,8 +21,9 @@ import {
 import GameAsset from './GameAsset'
 import AvatarPreview from './AvatarPreview'
 import SceneEffects, { deriveEffects } from './SceneEffects'
+import sceneLayouts from './sceneLayouts'
 
-// Dégradés CSS de fallback (Règle 3 : pas de beaux assets pour les bgs inconnus).
+// Dégradés CSS de fallback (recettes legacy sans fond peint dédié).
 const BACKGROUNDS = {
   atelier_fonderie: 'linear-gradient(180deg,#7f1d1d 0%,#b91c1c 50%,#f59e0b 100%)',
   atelier_forgeron: 'linear-gradient(180deg,#451a03 0%,#92400e 50%,#fbbf24 100%)',
@@ -35,22 +35,11 @@ const IMAGE_BACKGROUNDS = {
   foret_bucheron: '/assets/zones/bg_foret_bucheron.svg',
   atelier_forgeron: '/assets/zones/bg_forge_enluminure.png',
   atelier_fonderie: '/assets/zones/bg_forge_enluminure.png',
-  // Chaîne acier v2.0 : fonds dédiés par recette.
   fondeur_bg_atelier: '/assets/chaine_acier/fondeur_bg_atelier.png',
   forgeron_bg_atelier: '/assets/chaine_acier/forgeron_bg_atelier.png',
 }
 
-// --- Registre de layout O1 ------------------------------------------------
-// Positions absolues (% du décor) des éléments par clé de `background`.
-// Un élément absent du layout est placé en "zone de staging" (bandeau bas)
-// -> préserve les recettes LLM générées sans layout dédié (Règle 3).
-//
-// Convention : { left, top, w } en % de la zone décor. `w` est la largeur ;
-// la hauteur est auto (ratio du sprite).
-//
-// Composition visée (bg_forge_enluminure.png) :
-//   - atelier_forgeron / atelier_fonderie : éléments de forge à gauche
-//     (four, feu, enclume), espace préparation/avatar à droite.
+// --- Layout legacy (recettes sans sceneLayouts) ----------------------------
 const SCENE_LAYOUTS = {
   atelier_forgeron: {
     feu_forge:        { left: '6%',  top: '48%', w: '24%' },
@@ -62,27 +51,18 @@ const SCENE_LAYOUTS = {
     four:             { left: '6%',  top: '46%', w: '26%' },
     moule:            { left: '38%', top: '54%', w: '20%' },
     zone_preparation: { left: '66%', top: '14%', w: '26%' },
-    // NB: les draggables simples (metal_liquide, minerai, charbon, tablier,
-    // gants) vont en zone de staging pour éviter le chevauchement avec les
-    // dropzones fixes. Seuls les éléments "both" (draggable+dropzone) restent
-    // à position dédiée car ils sont aussi des pièces du décor.
   },
-  // --- Chaîne acier v2.0 : positions dérivées de l'analyse visuelle des
-  //     fonds fondeur_bg_atelier.png / forgeron_bg_atelier.png.
-  //     fondeur : four à gauche, moule/établi centre-droite, table basse devant.
   fondeur_bg_atelier: {
-    four_haut_fourneau: { left: '8%',  top: '40%', w: '22%' }, // gueule du four (dépot minerai+charbon)
-    moule_lingot:       { left: '40%', top: '52%', w: '18%' }, // moule sur l'établi (dépot acier liquide)
-    zone_livraison:     { left: '66%', top: '60%', w: '20%' }, // table où on pose le lingot refroidi
+    four_haut_fourneau: { left: '8%',  top: '40%', w: '22%' },
+    moule_lingot:       { left: '40%', top: '52%', w: '18%' },
+    zone_livraison:     { left: '66%', top: '60%', w: '20%' },
   },
-  //     forgeron : forge en pierre à gauche, enclume centre, seau centre-droite,
-  //     avatar/personnage à droite.
   forgeron_bg_atelier: {
-    forge_feu:   { left: '6%',  top: '40%', w: '22%' }, // foyer en pierre (chauffe lingot)
-    enclume:     { left: '34%', top: '54%', w: '18%' }, // enclume (frappe marteau)
-    seau_eau:    { left: '52%', top: '58%', w: '16%' }, // seau de trempe
-    avatar_zone: { left: '68%', top: '30%', w: '24%' }, // personnage (tablier+gants)
-    metal_chaud: { left: '36%', top: '40%', w: '16%' }, // zone métal chaud (tenailles)
+    forge_feu:   { left: '6%',  top: '40%', w: '22%' },
+    enclume:     { left: '34%', top: '54%', w: '18%' },
+    seau_eau:    { left: '52%', top: '58%', w: '16%' },
+    avatar_zone: { left: '68%', top: '30%', w: '24%' },
+    metal_chaud: { left: '36%', top: '40%', w: '16%' },
   },
   foret: {
     billot:           { left: '10%', top: '54%', w: '22%' },
@@ -95,40 +75,93 @@ const SCENE_LAYOUTS = {
   },
 }
 
-// Zone de staging : les objets "draggables de l'étape courante" (tablier,
-// lingot, charbon...) qui ne sont pas une pièce fixe du décor. On les aligne
-// en bas du décor sur deux rangées maximum pour qu'ils restent visibles et
-// saisissables SANS jamais se chevaucher (chevauchement = drop cassé).
 function stagingLayout(index) {
-  const perRow = 4     // 4 slots par rangée
-  const slotW = 15     // largeur en %
+  const perRow = 4
+  const slotW = 15
   const gap = 2
   const totalW = perRow * slotW + (perRow - 1) * gap
   const startLeft = (100 - totalW) / 2
   const row = Math.floor(index / perRow)
   const col = index % perRow
-  const left = startLeft + col * (slotW + gap)
-  const top = 80 - row * 18  // rangée 0 à 80%, rangée 1 à 62%
-  return { left: `${left}%`, top: `${top}%`, w: `${slotW}%` }
+  return {
+    left: `${startLeft + col * (slotW + gap)}%`,
+    top: `${80 - row * 18}%`,
+    w: `${slotW}%`,
+  }
 }
 
-// Un élément est-il une "pièce fixe du décor" (dropzone/both/static) ?
-// Les draggables simples vont en staging sauf s'ils ont une position dédiée.
 function isStageProp(el) {
   return el.type === 'draggable'
 }
 
+// --- Composants partagés ---------------------------------------------------
+
+function DragOverlayGhost({ el }) {
+  if (!el) return null
+  return (
+    <div className="select-none flex flex-col items-center justify-center rounded-2xl bg-enl-ivoire/95 p-2 shadow-2xl scale-110 ring-4 ring-enl-or">
+      <GameAsset assetId={el.asset} emoji={el.emoji} label={el.label || el.id} />
+      {el.label && <span className="text-xs mt-1 font-semibold text-enl-encre">{el.label}</span>}
+    </div>
+  )
+}
+
+// --- Mode v2 : hotspot + rail inventaire -----------------------------------
+
+// Dropzone invisible alignée sur le fond peint, révèle un halo au survol.
+function HotspotDropzone({ id, layout, highlight, wrong, successFlash }) {
+  const { setNodeRef, isOver } = useDroppable({ id })
+  const ring = highlight ? 'ring-4 ring-amber-300 animate-pulse-gold' : ''
+  const over = isOver ? 'bg-amber-400/20' : 'bg-transparent'
+  const bad = wrong ? 'ring-4 ring-red-400 animate-wiggle' : ''
+  const flash = successFlash ? 'animate-drop-success' : ''
+  return (
+    <div
+      ref={setNodeRef}
+      data-testid={`elt-${id}`}
+      data-dnd-dropzone={id}
+      className={`absolute rounded-xl transition ${ring} ${over} ${bad} ${flash}`}
+      style={{ top: layout.top, left: layout.left, width: layout.width, height: layout.height }}
+    />
+  )
+}
+
+// Prop draggable dans le rail inventaire (mode v2).
+function InventoryItem({ id, emoji, asset, label, disabled, wrong }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id, disabled })
+  const style = {
+    transform: transform ? `translate3d(${transform.x}px,${transform.y}px,0)` : undefined,
+    opacity: isDragging ? 0.35 : 1,
+    cursor: disabled ? 'default' : 'grab',
+  }
+  const halo = !disabled ? 'animate-pulse-gold ring-2 ring-enl-or' : 'opacity-40'
+  const anim = wrong ? 'animate-wiggle ring-4 ring-red-400' : ''
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      data-testid={`elt-${id}`}
+      data-dnd-draggable={id}
+      className={`select-none flex flex-col items-center justify-center rounded-2xl bg-enl-ivoire/90 p-2 shadow-lg transition ${halo} ${anim}`}
+    >
+      <GameAsset assetId={asset} emoji={emoji} label={label || id} size="md" />
+      {label && <span className="text-xs mt-1 font-semibold text-enl-encre drop-shadow">{label}</span>}
+    </div>
+  )
+}
+
+// --- Mode legacy : sprite-based --------------------------------------------
+
 function Draggable({ id, emoji, asset, label, disabled, wrong }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id, disabled })
-  // Note : le transform inline reste (surchargé par DragOverlay pour le ghost).
-  // On garde cursor 'grab' sur l'élément source — signal lu par e2e_objective5.
   const style = {
     transform: transform ? `translate3d(${transform.x}px,${transform.y}px,0)` : undefined,
     opacity: isDragging ? 0.35 : 1,
     cursor: disabled ? 'default' : 'grab',
   }
   const anim = wrong ? 'animate-wiggle ring-4 ring-red-400' : ''
-  // Halo or pulsant seulement si l'élément est la source active (non disabled).
   const halo = !disabled ? 'animate-pulse-gold ring-2 ring-enl-or' : 'opacity-40'
   return (
     <div
@@ -148,14 +181,9 @@ function Draggable({ id, emoji, asset, label, disabled, wrong }) {
 
 function Dropzone({ id, emoji, asset, label, highlight, wrong, successFlash, children }) {
   const { setNodeRef, isOver } = useDroppable({ id })
-  // Token 'ring-amber' conservé : e2e_objective5:37 détecte la cible attendue
-  // via className.includes('ring-amber'). On garde ce token ET on ajoute le
-  // halo or pulsant pour le rendu enluminé.
   const ring = highlight ? 'ring-4 ring-amber-300 animate-pulse-gold' : ''
-  // Au survol d'un objet compatible : halo vermillon + intensification.
   const over = isOver ? 'ring-4 ring-enl-vermillon scale-105' : ''
   const bad = wrong ? 'ring-4 ring-red-400 animate-wiggle' : ''
-  // Brief O4.4 : flash doré + scale 1.15 au dépôt correct (600ms).
   const flash = successFlash ? 'animate-drop-success' : ''
   return (
     <div
@@ -164,9 +192,7 @@ function Dropzone({ id, emoji, asset, label, highlight, wrong, successFlash, chi
       data-dnd-dropzone={id}
       className={`relative flex flex-col items-center justify-center rounded-2xl bg-enl-ivoire/40 border-2 border-enl-or/60 p-2 shadow-lg transition ${ring} ${over} ${bad} ${flash}`}
     >
-      {children ? (
-        children
-      ) : (
+      {children ? children : (
         <>
           <GameAsset assetId={asset} emoji={emoji} label={label || id} />
           {label && <span className="text-xs mt-1 font-semibold text-enl-encre drop-shadow">{label}</span>}
@@ -176,7 +202,6 @@ function Dropzone({ id, emoji, asset, label, highlight, wrong, successFlash, chi
   )
 }
 
-// Draggable "intérieur" : pour un élément "both" (draggable + dropzone).
 function DraggableInner({ id, emoji, asset, disabled, wrong }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id, disabled })
   const style = {
@@ -210,48 +235,47 @@ function StaticElt({ id, emoji, asset, label }) {
   )
 }
 
-export default function Scene({ scenario, childName, avatarConfig, onComplete, onInstruction, onSuccess }) {
+// --- Composant principal ---------------------------------------------------
+
+export default function Scene({ recipeId, scenario, childName, avatarConfig, onComplete, onInstruction, onSuccess }) {
   const [stepIdx, setStepIdx] = useState(0)
-  const [wrongId, setWrongId] = useState(null) // id d'élément en secousse (T2.4)
+  const [wrongId, setWrongId] = useState(null)
   const [done, setDone] = useState(false)
-  // DragOverlay : id de l'élément en cours de glissement (pour le ghost).
   const [activeId, setActiveId] = useState(null)
-  // Brief O4.4 : dropzone qui vient de recevoir un dépôt correct (flash doré).
   const [successTargetId, setSuccessTargetId] = useState(null)
   const sensor = useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
 
   const step = scenario.steps[stepIdx]
   const total = scenario.steps.length
-
   const expectedSource = step?.action_attendue?.source
   const expectedTarget = step?.action_attendue?.target
 
-  const bgSrc = IMAGE_BACKGROUNDS[scenario.background]
+  // Détermine si cette recette utilise le mode v2 (hotspots invisibles).
+  const layoutV2 = recipeId ? sceneLayouts[recipeId] : null
+  const hasV2Layout = !!layoutV2
+
+  const bgSrc = hasV2Layout
+    ? layoutV2.background
+    : IMAGE_BACKGROUNDS[scenario.background]
   const bgCss = BACKGROUNDS[scenario.background] || BACKGROUNDS.foret
 
-  // Layout du décor courant + fallback staging.
-  const layout = SCENE_LAYOUTS[scenario.background] || {}
+  // Layout legacy (mode sprite).
+  const legacyLayout = SCENE_LAYOUTS[scenario.background] || {}
   const stagedIds = useMemo(() => {
-    // Les draggables sans position dédiée vont en staging ; on assigne un slot.
+    if (hasV2Layout) return {}
     const m = {}
-    let stageIdx = 0
+    let idx = 0
     for (const el of scenario.elements || []) {
-      if (layout[el.id]) continue // position dédiée
-      if (isStageProp(el)) {
-        m[el.id] = stagingLayout(stageIdx++)
-      }
+      if (legacyLayout[el.id]) continue
+      if (isStageProp(el)) m[el.id] = stagingLayout(idx++)
     }
     return m
-  }, [scenario.elements, layout])
+  }, [scenario.elements, legacyLayout, hasV2Layout])
 
-  // Map finale id -> position ( dédiée | staging ).
-  const posOf = (id) => layout[id] || stagedIds[id]
+  const posOf = (id) => legacyLayout[id] || stagedIds[id]
 
-  // T3.2 — à chaque étape (y compris la 1re au montage), on annonce l'instruction.
   useEffect(() => {
-    if (!done && step?.instruction_tts) {
-      onInstruction?.(step.instruction_tts)
-    }
+    if (!done && step?.instruction_tts) onInstruction?.(step.instruction_tts)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepIdx, done])
 
@@ -262,9 +286,7 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
     const src = active.id
     const tgt = over.id
     if (src === expectedSource && tgt === expectedTarget) {
-      // T2.3 — succès : on lit le success_tts, puis on passe à l'étape suivante.
       setWrongId(null)
-      // Brief O4.4 : flash doré + scale sur la dropzone cible pendant 600ms.
       setSuccessTargetId(tgt)
       setTimeout(() => setSuccessTargetId(null), 600)
       onSuccess?.(step.success_tts)
@@ -275,21 +297,24 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
         setStepIdx((i) => i + 1)
       }
     } else {
-      // T2.4 — erreur : feedback visuel (secousse rouge), sans bloquer.
       setWrongId(`${src}>${tgt}`)
       setTimeout(() => setWrongId(null), 700)
     }
   }
 
-  // Étapes déjà validées (pour les calques de transformation).
   const validatedSteps = (scenario.steps || []).slice(0, stepIdx)
   const effects = deriveEffects(validatedSteps)
-  // Positions des ancres d'effet (layout + fallback sur la position du sprite
-  // source si la cible n'a pas de slot dédié).
   const effectLayouts = {}
-  for (const el of scenario.elements || []) effectLayouts[el.id] = posOf(el.id)
+  for (const el of scenario.elements || []) {
+    if (hasV2Layout) {
+      const dz = layoutV2.dropzones[el.id]
+      // SceneEffects attend { left, top, w } ; sceneLayouts utilise { left, top, width, height }.
+      effectLayouts[el.id] = dz ? { left: dz.left, top: dz.top, w: dz.width } : undefined
+    } else {
+      effectLayouts[el.id] = posOf(el.id)
+    }
+  }
 
-  // Sprite actif pour le DragOverlay (le ghost qui suit le curseur).
   const activeEl = (scenario.elements || []).find((e) => e.id === activeId)
 
   if (done) {
@@ -302,6 +327,115 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
     )
   }
 
+  // ── Mode v2 : fond peint + hotspots invisibles + rail inventaire ──────────
+  if (hasV2Layout) {
+    const draggableEls = (scenario.elements || []).filter((el) => el.type === 'draggable' || el.type === 'both')
+    const hotspotEls = (scenario.elements || []).filter((el) => el.type === 'dropzone' || el.type === 'both')
+    const staticEls = (scenario.elements || []).filter((el) => el.type === 'static')
+
+    return (
+      <div data-testid="scene" className="rounded-3xl overflow-hidden shadow-xl border-4 border-enl-or/40">
+        <DndContext
+          sensors={[sensor]}
+          onDragStart={(e) => setActiveId(e.active.id)}
+          onDragCancel={() => setActiveId(null)}
+          onDragEnd={handleDragEnd}
+        >
+          {/* Zone de jeu 16:9 */}
+          <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
+            {/* Fond peint */}
+            <img
+              src={bgSrc}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+
+            {/* Calques d'effet */}
+            <SceneEffects validatedSteps={validatedSteps} layouts={effectLayouts} />
+
+            {/* Compteur d'étape — coin supérieur droit */}
+            <span className="absolute top-2 right-2 z-20 rounded-full bg-enl-encre/70 text-enl-ivoire px-3 py-1 text-sm font-bold">
+              Étape {stepIdx + 1} / {total}
+            </span>
+
+            {/* Avatar — coin supérieur gauche */}
+            <div
+              className="absolute top-2 left-2 z-20 flex h-14 w-14 items-center justify-center rounded-full border-4 border-enl-or bg-enl-ivoire/75 shadow-lg"
+              title={childName}
+            >
+              {avatarConfig ? (
+                <AvatarPreview config={avatarConfig} size={48} />
+              ) : (
+                <span className="text-4xl drop-shadow">{scenario.avatar || '👧'}</span>
+              )}
+            </div>
+
+            {/* Hotspots invisibles — alignés sur le fond peint */}
+            {hotspotEls.map((el) => {
+              const dzLayout = layoutV2.dropzones[el.id]
+              if (!dzLayout) return null
+              const isWrongTgt = wrongId?.endsWith(`>${el.id}`)
+              return (
+                <HotspotDropzone
+                  key={el.id}
+                  id={el.id}
+                  layout={dzLayout}
+                  highlight={el.id === expectedTarget}
+                  wrong={isWrongTgt}
+                  successFlash={el.id === successTargetId}
+                />
+              )
+            })}
+
+            {/* Éléments statiques dans la scène */}
+            {staticEls.map((el) => {
+              const pos = layoutV2.dropzones[el.id]
+              if (!pos) return null
+              return (
+                <div key={el.id} className="absolute z-10" style={{ top: pos.top, left: pos.left, width: pos.width }}>
+                  <StaticElt id={el.id} emoji={el.emoji} asset={el.asset} label={el.label} />
+                </div>
+              )
+            })}
+
+            {/* GuideBubble — bulle d'instruction en bas de la scène */}
+            <div
+              data-testid="instruction"
+              className="absolute bottom-2 left-1/2 z-20 -translate-x-1/2 w-[90%] rounded-2xl bg-enl-encre/80 px-4 py-2 text-center backdrop-blur-sm"
+            >
+              <p className="text-base font-story text-enl-ivoire leading-snug">🎵 {step.instruction_tts}</p>
+            </div>
+
+            <DragOverlay dropAnimation={null}>
+              <DragOverlayGhost el={activeEl} />
+            </DragOverlay>
+          </div>
+
+          {/* Rail inventaire — props draggables sous la scène */}
+          <div className="flex flex-wrap gap-3 p-3 bg-enl-encre/85 justify-center min-h-[80px]">
+            {draggableEls.map((el) => {
+              const isWrongSrc = wrongId?.startsWith(`${el.id}>`)
+              return (
+                <div key={el.id} className="w-16">
+                  <InventoryItem
+                    id={el.id}
+                    emoji={el.emoji}
+                    asset={el.asset}
+                    label={el.label}
+                    disabled={el.id !== expectedSource}
+                    wrong={isWrongSrc}
+                  />
+                </div>
+              )
+            })}
+          </div>
+        </DndContext>
+      </div>
+    )
+  }
+
+  // ── Mode legacy : sprite-based layout -------------------------------------
   return (
     <div data-testid="scene" className="rounded-3xl overflow-hidden shadow-xl border-4 border-enl-or/40">
       <div
@@ -312,7 +446,6 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
             : { background: bgCss }
         }
       >
-        {/* Bandeau supérieur : avatar (gauche) + compteur d'étape (droite) */}
         <div className="relative z-20 flex items-center justify-between mb-3">
           <div
             className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-enl-or bg-enl-ivoire/75 shadow-lg"
@@ -329,15 +462,12 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
           </span>
         </div>
 
-        {/* Consigne (instruction_tts) affichée aussi à l'écran */}
         <div data-testid="instruction" className="card mb-4 py-3 relative z-20">
           <p className="text-lg font-story text-stone-800">🎵 {step.instruction_tts}</p>
         </div>
 
-        {/* Calques d'effet (flammes/étincelles/lueur) sous les éléments */}
         <SceneEffects validatedSteps={validatedSteps} layouts={effectLayouts} />
 
-        {/* Décor interactif : chaque élément positionné dans le décor. */}
         <DndContext
           sensors={[sensor]}
           onDragStart={(e) => setActiveId(e.active.id)}
@@ -345,11 +475,9 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
           onDragEnd={handleDragEnd}
         >
           {(scenario.elements || []).map((el) => {
-            const isWrongSrc = wrongId && wrongId.startsWith(`${el.id}>`)
-            const isWrongTgt = wrongId && wrongId.endsWith(`>${el.id}`)
+            const isWrongSrc = wrongId?.startsWith(`${el.id}>`)
+            const isWrongTgt = wrongId?.endsWith(`>${el.id}`)
             const pos = posOf(el.id)
-            // Wrapper positionné : si pas de position (fallback total), on
-            // reste dans le flux via un conteneur inline bas.
             const wrapStyle = pos
               ? { position: 'absolute', left: pos.left, top: pos.top, width: pos.w, zIndex: 10 }
               : { position: 'relative', zIndex: 10 }
@@ -381,23 +509,11 @@ export default function Scene({ scenario, childName, avatarConfig, onComplete, o
               return <StaticElt id={el.id} emoji={el.emoji} asset={el.asset} label={el.label} />
             })()
 
-            return (
-              <div key={el.id} style={wrapStyle}>
-                {inner}
-              </div>
-            )
+            return <div key={el.id} style={wrapStyle}>{inner}</div>
           })}
 
-          {/* DragOverlay : ghost qui suit le curseur pendant le drag. */}
           <DragOverlay dropAnimation={null}>
-            {activeEl ? (
-              <div className="select-none flex flex-col items-center justify-center rounded-2xl bg-enl-ivoire/95 p-2 shadow-2xl scale-110 ring-4 ring-enl-or">
-                <GameAsset assetId={activeEl.asset} emoji={activeEl.emoji} label={activeEl.label || activeEl.id} />
-                {activeEl.label && (
-                  <span className="text-xs mt-1 font-semibold text-enl-encre">{activeEl.label}</span>
-                )}
-              </div>
-            ) : null}
+            <DragOverlayGhost el={activeEl} />
           </DragOverlay>
         </DndContext>
       </div>

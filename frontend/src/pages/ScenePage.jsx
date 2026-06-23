@@ -123,6 +123,7 @@ export default function ScenePage({ recipe, childName, avatarConfig, onCompleted
               et onSuccess (action validée) pour déclencher les TTS. */}
           <Scene
             key={fullRecipe.id}
+            recipeId={fullRecipe.id}
             scenario={fullRecipe.scenario}
             childName={childName}
             avatarConfig={avatarConfig}
