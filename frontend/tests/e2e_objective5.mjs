@@ -62,6 +62,17 @@ async function completeScene(page) {
 const browser = await chromium.launch()
 try {
   const page = await browser.newPage()
+  // Avatar pré-défini (sinon l'app reste sur l'écran de sélection d'avatar).
+  await page.addInitScript(() => {
+    localStorage.setItem('arbre_savoirs_avatar', JSON.stringify({
+      base: 'avatar_base_apprenti',
+      visage: 'avatar_visage_souriant',
+      cheveux: 'avatar_cheveux_01',
+      chapeau: null,
+      tenue: 'avatar_tabrier_forgeron',
+      accessoires: ['avatar_gants'],
+    }))
+  })
   try {
     await runTests(page)
   } catch (e) {
