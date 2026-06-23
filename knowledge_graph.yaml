@@ -40,6 +40,18 @@ nodes:
     emoji: "⚫"
     description: "Roche noire qui brûle très longtemps et dégage une grande chaleur."
 
+  - id: roche_brute
+    label: "Roche de la mine"
+    type: materiau
+    emoji: "🪨"
+    description: "La pierre brute des parois de la mine, d'où l'on extrait le charbon, le minerai de fer et parfois de l'or."
+
+  - id: pepite_or
+    label: "Pépite d'or"
+    type: materiau
+    emoji: "✨"
+    description: "Un éclat d'or pur trouvé caché dans la roche. Très rare et très précieux : on le garde pour l'orfèvre."
+
   - id: chaleur
     label: "Chaleur extrême"
     type: concept
@@ -99,6 +111,80 @@ nodes:
 # RECETTES (scènes interactives)
 # -----------------------------------------------------------------------------
 recipes:
+  # === Recette 0 : le Mineur — extraction (v2.0 enluminure) ===================
+  # Début de la chaîne du métal : le mineur extrait le charbon et le minerai de
+  # fer qui alimentent le fondeur, et déniche une pépite d'or bonus (future
+  # recette Orfèvre). prerequis: null -> jouable d'emblée.
+  #
+  # NB conversions click -> drag_and_drop (le moteur de scène ne gère que le
+  # glisser-déposer, cf. fondeur/forgeron) :
+  #   - "allumer la lanterne" (click)        -> glisser la lanterne au crochet
+  #   - "pousser le chariot vers la sortie"  -> glisser le chariot chargé à la sortie
+  - id: mineur_tresors_terre
+    titre: "Les Trésors de la Terre"
+    metier: "Mineur"
+    ordre: 0
+    prerequis: null
+    ingredients:
+      - id: roche_brute
+        quantite: 1
+    resultat:
+      - id: charbon
+      - id: minerai_fer
+      - id: pepite_or
+    scenario:
+      background: "mineur_bg_galerie"
+      avatar: "👧"
+      elements:
+        # Dropzones (zones invisibles alignées sur le décor peint)
+        - { id: lanterne_crochet, emoji: "🪝", asset: "mineur_bg_galerie",  type: "dropzone" }
+        - { id: veine_charbon,    emoji: "⚫", asset: "mineur_bg_galerie",  type: "dropzone" }
+        - { id: veine_minerai,    emoji: "🪨", asset: "mineur_bg_galerie",  type: "dropzone" }
+        - { id: veine_or,         emoji: "✨", asset: "mineur_bg_galerie",  type: "dropzone" }
+        - { id: chariot_zone,     emoji: "🛒", asset: "mineur_bg_galerie",  type: "dropzone" }
+        - { id: poche_avatar,     emoji: "👝", asset: "mineur_bg_galerie",  type: "dropzone" }
+        - { id: sortie_galerie,   emoji: "➡️", asset: "mineur_bg_galerie",  type: "dropzone" }
+        # Draggables (props du rail d'inventaire)
+        - { id: lanterne,       emoji: "🏮", asset: "mineur_prop_lanterne",       type: "draggable" }
+        - { id: pic,            emoji: "⛏️", asset: "mineur_prop_pic",            type: "draggable" }
+        - { id: charbon,        emoji: "⚫", asset: "v2_prop_charbon",            type: "draggable" }
+        - { id: minerai_fer,    emoji: "🪨", asset: "v2_prop_minerai_fer",        type: "draggable" }
+        - { id: pepite_or,      emoji: "✨", asset: "mineur_prop_pepite_or",      type: "draggable" }
+        - { id: chariot_charge, emoji: "🛒", asset: "mineur_result_chariot_charge", type: "draggable" }
+      steps:
+        - id: 1
+          instruction_tts: "Il fait tout noir dans la mine ! Accroche la lanterne pour éclairer la galerie !"
+          action_attendue: { type: "drag_and_drop", source: "lanterne", target: "lanterne_crochet" }
+          success_tts: "La galerie s'illumine ! Tu vois les veines de minerai dans la roche."
+        - id: 2
+          instruction_tts: "Frappe la veine noire avec ton pic ! C'est du charbon !"
+          action_attendue: { type: "drag_and_drop", source: "pic", target: "veine_charbon" }
+          success_tts: "Tac ! Des morceaux de charbon tombent. Le charbon sert à faire un feu très chaud."
+        - id: 3
+          instruction_tts: "Mets le charbon dans le chariot !"
+          action_attendue: { type: "drag_and_drop", source: "charbon", target: "chariot_zone" }
+          success_tts: "Bien ! Le chariot se remplit."
+        - id: 4
+          instruction_tts: "Maintenant frappe la veine rouge-brun ! C'est du minerai de fer !"
+          action_attendue: { type: "drag_and_drop", source: "pic", target: "veine_minerai" }
+          success_tts: "Bravo ! Ces roches contiennent du fer caché à l'intérieur."
+        - id: 5
+          instruction_tts: "Mets le minerai dans le chariot avec le charbon !"
+          action_attendue: { type: "drag_and_drop", source: "minerai_fer", target: "chariot_zone" }
+          success_tts: "Le chariot est bien chargé !"
+        - id: 6
+          instruction_tts: "Oh ! Tu vois quelque chose qui brille... Frappe doucement avec le pic !"
+          action_attendue: { type: "drag_and_drop", source: "pic", target: "veine_or" }
+          success_tts: "Une pépite d'or ! C'est très rare et très précieux !"
+        - id: 7
+          instruction_tts: "Mets la pépite dans ta poche pour la garder précieusement !"
+          action_attendue: { type: "drag_and_drop", source: "pepite_or", target: "poche_avatar" }
+          success_tts: "Elle est à toi ! Un jour tu pourras la donner à l'orfèvre."
+        - id: 8
+          instruction_tts: "Pousse le chariot chargé vers la sortie de la mine !"
+          action_attendue: { type: "drag_and_drop", source: "chariot_charge", target: "sortie_galerie" }
+          success_tts: "Le chariot roule sur les rails ! Le charbon et le minerai filent vers le fondeur."
+
   # === Chaîne métal : minerai -> acier -> épée (v2.0 enluminure) ==============
   # Chaîne causale : fondeur_naissance_acier produit le lingot d'acier qui sert
   # de matière première à forgeron_epee. Le champ prerequis verrouille la 2e

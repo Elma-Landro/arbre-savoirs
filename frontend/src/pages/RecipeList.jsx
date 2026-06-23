@@ -5,6 +5,7 @@ import { fetchRecipes } from '../api'
 import GameAsset from '../components/GameAsset'
 
 const RECIPE_ICON_BY_ID = {
+  mineur_tresors_terre: 'mineur_icon_recette',
   fondeur_naissance_acier: 'v2_icon_fondeur',
   forgeron_epee: 'v2_icon_forgeron',
   recette_bucheronnage: 'icon_bucheron',

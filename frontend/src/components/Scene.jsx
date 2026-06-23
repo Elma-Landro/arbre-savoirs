@@ -30,6 +30,8 @@ const BACKGROUNDS = {
   foret: 'linear-gradient(180deg,#14532d 0%,#16a34a 60%,#86efac 100%)',
   atelier_charron: 'linear-gradient(180deg,#78350f 0%,#a16207 50%,#fde68a 100%)',
   celebration: 'linear-gradient(180deg,#1e3a8a 0%,#7c3aed 50%,#f472b6 100%)',
+  // Galerie de mine : pierre sombre -> lueur de lanterne en bas.
+  mineur_bg_galerie: 'linear-gradient(180deg,#1c1917 0%,#44403c 55%,#92702f 100%)',
 }
 const IMAGE_BACKGROUNDS = {
   foret_bucheron: '/assets/zones/bg_foret_bucheron.svg',
@@ -243,6 +245,8 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
   const [done, setDone] = useState(false)
   const [activeId, setActiveId] = useState(null)
   const [successTargetId, setSuccessTargetId] = useState(null)
+  // Fond peint v2 indisponible (asset pas encore livré) -> fallback dégradé.
+  const [bgError, setBgError] = useState(false)
   const sensor = useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
 
   const step = scenario.steps[stepIdx]
@@ -341,15 +345,21 @@ export default function Scene({ recipeId, scenario, childName, avatarConfig, onC
           onDragCancel={() => setActiveId(null)}
           onDragEnd={handleDragEnd}
         >
-          {/* Zone de jeu 16:9 */}
-          <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
-            {/* Fond peint */}
-            <img
-              src={bgSrc}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+          {/* Zone de jeu 16:9 (dégradé de secours si le fond peint manque) */}
+          <div
+            className="relative w-full overflow-hidden"
+            style={{ aspectRatio: '16/9', background: bgCss }}
+          >
+            {/* Fond peint — masqué si l'asset n'est pas encore livré (onError) */}
+            {!bgError && (
+              <img
+                src={bgSrc}
+                alt=""
+                aria-hidden="true"
+                onError={() => setBgError(true)}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            )}
 
             {/* Calques d'effet */}
             <SceneEffects validatedSteps={validatedSteps} layouts={effectLayouts} />
